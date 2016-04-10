@@ -4,6 +4,8 @@ import LiveFrost
 import RxSwift
 import RxCocoa
 
+private let passcodeNumbersRequired: Int = 4
+
 class PasscodeLockViewController: UIViewController {
     
     let backgroundView: UIView
@@ -28,9 +30,10 @@ class PasscodeLockViewController: UIViewController {
     var passcodeNumberInputtedViews: [PasscodeNumberInputted] = []
     var passcodeNumbers: Variable<[Int]> = Variable([Int]())
     var disposeBag: DisposeBag = DisposeBag()
-    let completion: (Void -> Void)
+    let completion: ([Int] -> Bool)
     
-    init(backgroundView: UIView, completion: (Void -> Void)) {
+    
+    init(backgroundView: UIView, completion: ([Int] -> Bool)) {
         self.backgroundView = backgroundView
         self.completion = completion
         super.init(nibName: nil, bundle: nil)
@@ -54,10 +57,11 @@ class PasscodeLockViewController: UIViewController {
             (0, 0, 2)]
         for (number, x, y) in passcodeLayoutItems {
             let button = createButtonWithOffset("\(number)", horizontalOffset: x, verticalOffset: y)
-            button.rx_tap.subscribeNext({
-                self.passcodeNumbers.value.append(number)
-            })
-            .addDisposableTo(disposeBag)
+            button.rx_tap.subscribeNext {
+                if self.passcodeNumbers.value.count < passcodeNumbersRequired {
+                    self.passcodeNumbers.value.append(number)
+                }
+            }.addDisposableTo(disposeBag)
         }
         
         let inputOffsets: [CGFloat] = [-1.5, -0.5, 0.5, 1.5]
@@ -76,8 +80,8 @@ class PasscodeLockViewController: UIViewController {
         }.addDisposableTo(disposeBag)
         
         passcodeNumbers.asObservable().filter { numbers in
-            return numbers.count == 4
-        }.throttle(0.2, scheduler: MainScheduler.instance)
+            return numbers.count == passcodeNumbersRequired
+        }.throttle(0.1, scheduler: MainScheduler.instance)
         .subscribeNext { [weak self] numbers in
             self?.validatePasscode(numbers)
         }.addDisposableTo(disposeBag)
@@ -85,16 +89,37 @@ class PasscodeLockViewController: UIViewController {
     }
     
     func validatePasscode(numbers: [Int]) {
-        if false {
-            completion()
+        if completion(numbers) {
+            
         } else {
+            animateIncorrectPasscode()
             passcodeNumbers.value = []
         }
     }
     
     //MARK: Events
+    
     func highlightNextNumberInputtedView(viewIndex: Int) {
         passcodeNumberInputtedViews[viewIndex].animateToState(.Active)
+    }
+    
+    func animateIncorrectPasscode() {
+        for view in self.passcodeNumberInputtedViews {
+            view.transform = CGAffineTransformMakeTranslation(-40, 0)
+        }
+
+        UIView.animateWithDuration(
+            0.5,
+            delay: 0,
+            usingSpringWithDamping: 0.2,
+            initialSpringVelocity: 0,
+            options: [],
+            animations: {
+                for view in self.passcodeNumberInputtedViews {
+                    view.transform = CGAffineTransformIdentity
+                }
+            },
+            completion: nil)
     }
     
     //MARK: Sub view creation and layout
