@@ -1,13 +1,27 @@
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class PasscodePresenter {
     
     private var presentedWindow: UIWindow?
     private var passcodeLockWindow: UIWindow!
+    private var disposeBag: DisposeBag = DisposeBag()
     static let sharedInstance = PasscodePresenter()
     
-        
+    init() {
+        hookApplicationWillResignActive()
+    }
+    
+    func hookApplicationWillResignActive() {
+        NSNotificationCenter.defaultCenter().rx_notification(UIApplicationWillResignActiveNotification).subscribeNext { _ in
+            if !PasscodePresenter.sharedInstance.isShowingPasscode() {
+                PasscodePresenter.sharedInstance.presentInKeyWindow()
+            }
+        }.addDisposableTo(disposeBag)
+    }
+    
     func isShowingPasscode() -> Bool {
         return UIApplication.sharedApplication().keyWindow == passcodeLockWindow
     }
@@ -26,7 +40,11 @@ class PasscodePresenter {
         passcodeLockWindow = PasscodeWindow(frame: UIScreen.mainScreen().bounds)
         passcodeLockWindow.windowLevel = 2
         passcodeLockWindow.makeKeyAndVisible()
-        passcodeLockWindow.rootViewController = PasscodeLockViewController(backgroundView: imageView)
+        
+        let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView) {
+            self.dismiss()
+        }        
+        passcodeLockWindow.rootViewController = passcodeLockViewController
     }
     
     func dismiss() {

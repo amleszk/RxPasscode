@@ -1,6 +1,8 @@
 
 import UIKit
 import LiveFrost
+import RxSwift
+import RxCocoa
 
 class PasscodeLockViewController: UIViewController {
     
@@ -21,9 +23,14 @@ class PasscodeLockViewController: UIViewController {
         return dimmingView
     }()
     
+    var passcodeNumberInputtedViews: [PasscodeNumberInputted] = []
+    var passcodeNumbers: [Int] = []
+    var disposeBag: DisposeBag = DisposeBag()
+    let completion: (Void -> Void)
     
-    init(backgroundView: UIView) {
+    init(backgroundView: UIView, completion: (Void -> Void)) {
         self.backgroundView = backgroundView
+        self.completion = completion
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -38,28 +45,63 @@ class PasscodeLockViewController: UIViewController {
         view.pinView(dimmingView)
         view.pinView(frostView)
         
-        let offsets: [(String, CGFloat,CGFloat)] = [
-            ("1", -1, -1), ("2", 0, -1), ("3", 1, -1),
-            ("4", -1, 0), ("5", 0, 0), ("6", 1, 0),
-            ("7", -1, 1), ("8", 0, 1), ("9", 1, 1),
-            ("0", 0, 2)]
-        for (text, x, y) in offsets {
-            createButtonWithOffset(text, horizontalOffset: x, verticalOffset: y)
+        let buttonOffsets: [(Int, CGFloat,CGFloat)] = [
+            (1, -1, -1), (2, 0, -1), (3, 1, -1),
+            (4, -1, 0), (5, 0, 0), (6, 1, 0),
+            (7, -1, 1), (8, 0, 1), (9, 1, 1),
+            (0, 0, 2)]
+        for (number, x, y) in buttonOffsets {
+            let button = createButtonWithOffset("\(number)", horizontalOffset: x, verticalOffset: y)
+            button.rx_tap.subscribeNext({
+                self.passcodeNumbers.append(number)
+                if self.passcodeNumbers.count == 4 {
+                    self.completion()
+                }
+                self.incrementNumbersInputted()
+            })
+            .addDisposableTo(disposeBag)
+        }
+
+        let inputOffsets: [CGFloat] = [-1.5, -0.5, 0.5, 1.5]
+        for inputOffset in inputOffsets {
+            passcodeNumberInputtedViews.append(createInputWithOffset(inputOffset))
         }
     }
     
-    private let horizontalButtonSpacing: CGFloat = 95
-    private let verticalButtonSpacing: CGFloat = 95
+    //MARK: Events
+    
+    func incrementNumbersInputted() {
+        let nextViewToSetActive = passcodeNumberInputtedViews.filter { (view: PasscodeNumberInputted) -> Bool in
+            return view.displayedState == .Inactive
+        }.first
+        nextViewToSetActive?.animateToState(.Active)
+        
+    }
+    
+    //MARK: Sub view creation and layout
+    
+    private let horizontalButtonSpacing: CGFloat = 91
+    private let verticalButtonSpacing: CGFloat = 91
     private let buttonSize: CGFloat = 80
     private let buttonsCenterYOffset: CGFloat = -20
     
-    func createButtonWithOffset(text: String, horizontalOffset: CGFloat, verticalOffset: CGFloat) {
+    func createButtonWithOffset(text: String, horizontalOffset: CGFloat, verticalOffset: CGFloat) -> PasscodeNumberButton {
         let button = PasscodeNumberButton(buttonSize: buttonSize)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(text, forState: UIControlState.Normal)
         view.pinCenter(button, horizontalOffset: horizontalOffset*horizontalButtonSpacing, verticalOffset: buttonsCenterYOffset+verticalOffset*verticalButtonSpacing)
+        return button
     }
     
+    private let inputYOffset: CGFloat = -180
+    private let inputXOffset: CGFloat = 22
+    
+    func createInputWithOffset(horizontalOffset: CGFloat) -> PasscodeNumberInputted {
+        let input = PasscodeNumberInputted(size: 16)
+        input.translatesAutoresizingMaskIntoConstraints = false
+        view.pinCenter(input, horizontalOffset: horizontalOffset*inputXOffset, verticalOffset: inputYOffset)
+        return input
+    }
     
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.Portrait
