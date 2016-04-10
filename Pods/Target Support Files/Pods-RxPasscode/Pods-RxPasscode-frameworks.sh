@@ -85,9 +85,11 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-RxPasscode/LiveFrost.framework"
+  install_framework "Pods-RxPasscode/RxCocoa.framework"
   install_framework "Pods-RxPasscode/RxSwift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-RxPasscode/LiveFrost.framework"
+  install_framework "Pods-RxPasscode/RxCocoa.framework"
   install_framework "Pods-RxPasscode/RxSwift.framework"
 fi
