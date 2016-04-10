@@ -19,6 +19,17 @@ extension UIView {
         return (left: left, right: right, top: top, bottom: bottom)
     }
     
+    typealias CenterConstraints = (x: NSLayoutConstraint, y: NSLayoutConstraint)
+    
+    func pinCenter(subview: UIView, horizontalOffset: CGFloat, verticalOffset: CGFloat) -> CenterConstraints {
+        addSubview(subview)
+        let x = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: horizontalOffset)
+        addConstraint(x)
+        let y = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: verticalOffset)
+        addConstraint(y)
+        return (x,y)
+    }
+    
     func screenShotView() -> UIImage {
         let scale = UIScreen.mainScreen().scale
         UIGraphicsBeginImageContextWithOptions(layer.frame.size, false, scale);

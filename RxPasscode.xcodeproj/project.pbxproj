@@ -15,6 +15,7 @@
 		61946EF51CB9F93C00C86F46 /* PasscodeLockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61946EF41CB9F93C00C86F46 /* PasscodeLockViewController.swift */; };
 		61946EF71CB9F96100C86F46 /* PasscodePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61946EF61CB9F96100C86F46 /* PasscodePresenter.swift */; };
 		61946EF91CB9F99200C86F46 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61946EF81CB9F99200C86F46 /* Extensions.swift */; };
+		61946EFB1CBA001000C86F46 /* PasscodeSignButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61946EFA1CBA001000C86F46 /* PasscodeSignButton.swift */; };
 		821815A7A0F65AF748F9E7E0 /* Pods_RxPasscode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4551E770E265DFC12E1794 /* Pods_RxPasscode.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		61946EF41CB9F93C00C86F46 /* PasscodeLockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeLockViewController.swift; sourceTree = "<group>"; };
 		61946EF61CB9F96100C86F46 /* PasscodePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodePresenter.swift; sourceTree = "<group>"; };
 		61946EF81CB9F99200C86F46 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		61946EFA1CBA001000C86F46 /* PasscodeSignButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeSignButton.swift; sourceTree = "<group>"; };
 		6427CC487F6ACF74BB2E24F9 /* Pods-RxPasscode.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxPasscode.release.xcconfig"; path = "Pods/Target Support Files/Pods-RxPasscode/Pods-RxPasscode.release.xcconfig"; sourceTree = "<group>"; };
 		C150201CA9E2424BBDEFD3A7 /* Pods-RxPasscode.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxPasscode.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RxPasscode/Pods-RxPasscode.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -76,6 +78,7 @@
 				61946EF41CB9F93C00C86F46 /* PasscodeLockViewController.swift */,
 				61946EF61CB9F96100C86F46 /* PasscodePresenter.swift */,
 				61946EF81CB9F99200C86F46 /* Extensions.swift */,
+				61946EFA1CBA001000C86F46 /* PasscodeSignButton.swift */,
 			);
 			path = RxPasscode;
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61946EFB1CBA001000C86F46 /* PasscodeSignButton.swift in Sources */,
 				61946EF91CB9F99200C86F46 /* Extensions.swift in Sources */,
 				61946EF71CB9F96100C86F46 /* PasscodePresenter.swift in Sources */,
 				611ED1171CB70D39005B5563 /* ViewController.swift in Sources */,
