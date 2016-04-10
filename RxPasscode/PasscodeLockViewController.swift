@@ -27,15 +27,17 @@ class PasscodeLockViewController: UIViewController {
     
     typealias PasscodeLayoutItem = (number: Int, xOffset: CGFloat, yOffset: CGFloat)
     
+    var passcodeButtons: [PasscodeNumberButton] = []
     var passcodeNumberInputtedViews: [PasscodeNumberInputted] = []
     var passcodeNumbers: Variable<[Int]> = Variable([Int]())
     var disposeBag: DisposeBag = DisposeBag()
-    let completion: ([Int] -> Bool)
+    let validateCode: ([Int] -> Bool)
+    let unlocked: (Void -> Void)
     
-    
-    init(backgroundView: UIView, completion: ([Int] -> Bool)) {
+    init(backgroundView: UIView, validateCode: ([Int] -> Bool), unlocked: (Void -> Void)) {
         self.backgroundView = backgroundView
-        self.completion = completion
+        self.validateCode = validateCode
+        self.unlocked = unlocked
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -57,6 +59,7 @@ class PasscodeLockViewController: UIViewController {
             (0, 0, 2)]
         for (number, x, y) in passcodeLayoutItems {
             let button = createButtonWithOffset("\(number)", horizontalOffset: x, verticalOffset: y)
+            passcodeButtons.append(button)
             button.rx_tap.subscribeNext {
                 if self.passcodeNumbers.value.count < passcodeNumbersRequired {
                     self.passcodeNumbers.value.append(number)
@@ -89,8 +92,8 @@ class PasscodeLockViewController: UIViewController {
     }
     
     func validatePasscode(numbers: [Int]) {
-        if completion(numbers) {
-            
+        if validateCode(numbers) {
+            animateDismissal()
         } else {
             animateIncorrectPasscode()
             passcodeNumbers.value = []
@@ -120,6 +123,39 @@ class PasscodeLockViewController: UIViewController {
                 }
             },
             completion: nil)
+    }
+    
+    private let blurCallbackInterval: NSTimeInterval = 0.01
+    private let blurCallbackTrailoff: CGFloat = 0.5
+    
+    func animateDismissal() {
+        frostView.liveBlurring = true
+        
+        let timer = NSTimer(timeInterval: blurCallbackInterval, target: self, selector: #selector(PasscodeLockViewController.reduceFrostingBlurRadius), userInfo: nil, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+
+        UIView.animateWithDuration(
+            1.0,
+            delay: 0,
+            options: [.CurveEaseInOut],
+            animations: {
+                for view in self.passcodeNumberInputtedViews {
+                    view.alpha = 0
+                }
+                for view in self.passcodeButtons {
+                    view.alpha = 0
+                }
+                self.dimmingView.alpha = 0
+            },
+            completion: { _ in
+                timer.invalidate()
+                self.unlocked()
+        })
+        
+    }
+    
+    func reduceFrostingBlurRadius() {
+        frostView.blurRadius = frostView.blurRadius - blurCallbackTrailoff
     }
     
     //MARK: Sub view creation and layout

@@ -41,10 +41,11 @@ class PasscodePresenter {
         passcodeLockWindow.windowLevel = 2
         passcodeLockWindow.makeKeyAndVisible()
         
-        let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView) { passcode in
-            return false
-            //self.dismiss()
-        }        
+        let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
+            return true
+        }, unlocked: {
+            self.dismiss()
+        })
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
     
