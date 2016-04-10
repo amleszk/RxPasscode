@@ -48,14 +48,21 @@ class PasscodeLockViewController: UIViewController {
         }
     }
     
-    private let horizontalButtonSpacing: CGFloat = 70
-    private let verticalButtonSpacing: CGFloat = 70
+    private let horizontalButtonSpacing: CGFloat = 95
+    private let verticalButtonSpacing: CGFloat = 95
+    private let buttonSize: CGFloat = 80
+    private let buttonsCenterYOffset: CGFloat = -20
     
     func createButtonWithOffset(text: String, horizontalOffset: CGFloat, verticalOffset: CGFloat) {
-        let button = PasscodeSignButton(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+        let button = PasscodeNumberButton(buttonSize: buttonSize)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(text, forState: UIControlState.Normal)
-        view.pinCenter(button, horizontalOffset: horizontalOffset*horizontalButtonSpacing, verticalOffset: verticalOffset*verticalButtonSpacing)
+        view.pinCenter(button, horizontalOffset: horizontalOffset*horizontalButtonSpacing, verticalOffset: buttonsCenterYOffset+verticalOffset*verticalButtonSpacing)
+    }
+    
+    
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.Portrait
     }
     
 }

@@ -16,6 +16,7 @@ extension UIView {
         addConstraint(top)
         let bottom = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: 0)
         addConstraint(bottom)
+        
         return (left: left, right: right, top: top, bottom: bottom)
     }
     
@@ -23,10 +24,12 @@ extension UIView {
     
     func pinCenter(subview: UIView, horizontalOffset: CGFloat, verticalOffset: CGFloat) -> CenterConstraints {
         addSubview(subview)
+        
         let x = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.CenterX, multiplier: 1.0, constant: horizontalOffset)
         addConstraint(x)
         let y = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.CenterY, multiplier: 1.0, constant: verticalOffset)
         addConstraint(y)
+        
         return (x,y)
     }
     

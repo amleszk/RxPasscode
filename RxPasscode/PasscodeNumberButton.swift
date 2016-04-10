@@ -1,64 +1,45 @@
 
 import UIKit
 
-public class PasscodeSignButton: UIButton {
+class PasscodeSignButton: UIButton {
     
-    @IBInspectable
-    public var passcodeSign: String = "1"
-    
-    @IBInspectable
-    public var borderColor: UIColor = UIColor.whiteColor() {
+    var borderColor: UIColor = UIColor.whiteColor() {
         didSet {
             setupView()
         }
     }
     
-    @IBInspectable
-    public var borderRadius: CGFloat = 30 {
+    let borderRadius: CGFloat
+    let buttonSize: CGSize
+    
+    var highlightBackgroundColor: UIColor = UIColor.clearColor() {
         didSet {
             setupView()
         }
     }
     
-    @IBInspectable
-    public var highlightBackgroundColor: UIColor = UIColor.clearColor() {
-        didSet {
-            setupView()
-        }
-    }
-    
-    public override init(frame: CGRect) {
-        
-        super.init(frame: frame)
-        
+    init(buttonSize: CGFloat) {
+        self.buttonSize = CGSizeMake(buttonSize, buttonSize)
+        self.borderRadius = floor(buttonSize/2)
+        super.init(frame: CGRect(x: 0, y: 0, width: buttonSize, height: buttonSize))
         setupView()
         setupActions()
     }
     
-    public required init?(coder aDecoder: NSCoder) {
-        
-        super.init(coder: aDecoder)
-        
-        setupActions()
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    public override func intrinsicContentSize() -> CGSize {
-        
-        return CGSizeMake(60, 60)
+    override func intrinsicContentSize() -> CGSize {
+        return buttonSize
     }
     
     private var defaultBackgroundColor = UIColor.clearColor()
     
-    private func setupView() {
-        
+    private func setupView() {        
         layer.borderWidth = 1
         layer.cornerRadius = borderRadius
         layer.borderColor = borderColor.CGColor
-        
-        if let backgroundColor = backgroundColor {
-            
-            defaultBackgroundColor = backgroundColor
-        }
     }
     
     private func setupActions() {
