@@ -23,6 +23,8 @@ class PasscodeLockViewController: UIViewController {
         return dimmingView
     }()
     
+    typealias PasscodeLayoutItem = (number: Int, xOffset: CGFloat, yOffset: CGFloat)
+    
     var passcodeNumberInputtedViews: [PasscodeNumberInputted] = []
     var passcodeNumbers: [Int] = []
     var disposeBag: DisposeBag = DisposeBag()
@@ -45,12 +47,12 @@ class PasscodeLockViewController: UIViewController {
         view.pinView(dimmingView)
         view.pinView(frostView)
         
-        let buttonOffsets: [(Int, CGFloat,CGFloat)] = [
+        let passcodeLayoutItems: [PasscodeLayoutItem] = [
             (1, -1, -1), (2, 0, -1), (3, 1, -1),
             (4, -1, 0), (5, 0, 0), (6, 1, 0),
             (7, -1, 1), (8, 0, 1), (9, 1, 1),
             (0, 0, 2)]
-        for (number, x, y) in buttonOffsets {
+        for (number, x, y) in passcodeLayoutItems {
             let button = createButtonWithOffset("\(number)", horizontalOffset: x, verticalOffset: y)
             button.rx_tap.subscribeNext({
                 self.passcodeNumbers.append(number)
@@ -75,7 +77,6 @@ class PasscodeLockViewController: UIViewController {
             return view.displayedState == .Inactive
         }.first
         nextViewToSetActive?.animateToState(.Active)
-        
     }
     
     //MARK: Sub view creation and layout
@@ -95,9 +96,10 @@ class PasscodeLockViewController: UIViewController {
     
     private let inputYOffset: CGFloat = -180
     private let inputXOffset: CGFloat = 22
+    private let inputSize: CGFloat = 16
     
     func createInputWithOffset(horizontalOffset: CGFloat) -> PasscodeNumberInputted {
-        let input = PasscodeNumberInputted(size: 16)
+        let input = PasscodeNumberInputted(size: inputSize)
         input.translatesAutoresizingMaskIntoConstraints = false
         view.pinCenter(input, horizontalOffset: horizontalOffset*inputXOffset, verticalOffset: inputYOffset)
         return input
