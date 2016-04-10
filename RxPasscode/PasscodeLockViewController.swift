@@ -26,7 +26,7 @@ class PasscodeLockViewController: UIViewController {
     typealias PasscodeLayoutItem = (number: Int, xOffset: CGFloat, yOffset: CGFloat)
     
     var passcodeNumberInputtedViews: [PasscodeNumberInputted] = []
-    var passcodeNumbers: [Int] = []
+    var passcodeNumbers: Variable<[Int]> = Variable([Int]())
     var disposeBag: DisposeBag = DisposeBag()
     let completion: (Void -> Void)
     
@@ -55,28 +55,46 @@ class PasscodeLockViewController: UIViewController {
         for (number, x, y) in passcodeLayoutItems {
             let button = createButtonWithOffset("\(number)", horizontalOffset: x, verticalOffset: y)
             button.rx_tap.subscribeNext({
-                self.passcodeNumbers.append(number)
-                if self.passcodeNumbers.count == 4 {
-                    self.completion()
-                }
-                self.incrementNumbersInputted()
+                self.passcodeNumbers.value.append(number)
             })
             .addDisposableTo(disposeBag)
         }
-
+        
         let inputOffsets: [CGFloat] = [-1.5, -0.5, 0.5, 1.5]
         for inputOffset in inputOffsets {
             passcodeNumberInputtedViews.append(createInputWithOffset(inputOffset))
         }
+        
+        passcodeNumbers.asObservable().subscribeNext { numbers in
+            if numbers.count > 0 {
+                self.passcodeNumberInputtedViews[numbers.count-1].animateToState(.Active)
+            } else {
+                for view in self.passcodeNumberInputtedViews {
+                    view.animateToState(.Inactive)
+                }
+            }
+        }.addDisposableTo(disposeBag)
+        
+        passcodeNumbers.asObservable().filter { numbers in
+            return numbers.count == 4
+        }.throttle(0.2, scheduler: MainScheduler.instance)
+        .subscribeNext { [weak self] numbers in
+            self?.validatePasscode(numbers)
+        }.addDisposableTo(disposeBag)
+        
+    }
+    
+    func validatePasscode(numbers: [Int]) {
+        if false {
+            completion()
+        } else {
+            passcodeNumbers.value = []
+        }
     }
     
     //MARK: Events
-    
-    func incrementNumbersInputted() {
-        let nextViewToSetActive = passcodeNumberInputtedViews.filter { (view: PasscodeNumberInputted) -> Bool in
-            return view.displayedState == .Inactive
-        }.first
-        nextViewToSetActive?.animateToState(.Active)
+    func highlightNextNumberInputtedView(viewIndex: Int) {
+        passcodeNumberInputtedViews[viewIndex].animateToState(.Active)
     }
     
     //MARK: Sub view creation and layout
