@@ -75,21 +75,37 @@
 		611ED1131CB70D39005B5563 /* RxPasscode */ = {
 			isa = PBXGroup;
 			children = (
+				61946EF81CB9F99200C86F46 /* Extensions.swift */,
+				61ABF07A1CBC219B00D1B443 /* Passcode control */,
+				61ABF0791CBC218D00D1B443 /* Views */,
 				611ED1141CB70D39005B5563 /* AppDelegate.swift */,
 				611ED1161CB70D39005B5563 /* ViewController.swift */,
 				611ED1181CB70D39005B5563 /* Main.storyboard */,
 				611ED11B1CB70D39005B5563 /* Assets.xcassets */,
 				611ED11D1CB70D39005B5563 /* LaunchScreen.storyboard */,
 				611ED1201CB70D39005B5563 /* Info.plist */,
-				61946EF41CB9F93C00C86F46 /* PasscodeLockViewController.swift */,
-				61ABF0541CBBFF7500D1B443 /* PasscodeLockViewController+Animations.swift */,
-				61946EF61CB9F96100C86F46 /* PasscodePresenter.swift */,
-				61946EF81CB9F99200C86F46 /* Extensions.swift */,
-				61946EFA1CBA001000C86F46 /* PasscodeNumberButton.swift */,
-				61ABF04A1CBABB3A00D1B443 /* PasscodeStyleView.swift */,
-				61ABF04C1CBABB6C00D1B443 /* PasscodeNumberInputted.swift */,
 			);
 			path = RxPasscode;
+			sourceTree = "<group>";
+		};
+		61ABF0791CBC218D00D1B443 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				61ABF04C1CBABB6C00D1B443 /* PasscodeNumberInputted.swift */,
+				61ABF04A1CBABB3A00D1B443 /* PasscodeStyleView.swift */,
+				61946EFA1CBA001000C86F46 /* PasscodeNumberButton.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		61ABF07A1CBC219B00D1B443 /* Passcode control */ = {
+			isa = PBXGroup;
+			children = (
+				61ABF0541CBBFF7500D1B443 /* PasscodeLockViewController+Animations.swift */,
+				61946EF41CB9F93C00C86F46 /* PasscodeLockViewController.swift */,
+				61946EF61CB9F96100C86F46 /* PasscodePresenter.swift */,
+			);
+			name = "Passcode control";
 			sourceTree = "<group>";
 		};
 		6E0FFBBBD0FE068E0510DC3E /* Pods */ = {

@@ -26,24 +26,6 @@ class PasscodePresenter {
         return UIApplication.sharedApplication().keyWindow == passcodeLockWindow
     }
     
-    private func screenshotAndPresentNewWindow() -> UIImageView? {
-        presentedWindow = UIApplication.sharedApplication().keyWindow
-        guard let presentedWindow = presentedWindow else {
-            return nil
-        }
-        
-        let imageView = UIImageView(image: presentedWindow.screenShotView())
-        
-        presentedWindow.windowLevel = 1
-        presentedWindow.endEditing(true)
-        
-        passcodeLockWindow = UIWindow(frame: UIScreen.mainScreen().bounds)
-        passcodeLockWindow.windowLevel = 2
-        passcodeLockWindow.makeKeyAndVisible()
-        
-        return imageView
-    }
-
     func presentWithValidatePasscode() {
         guard let imageView = screenshotAndPresentNewWindow() else {
             return
@@ -109,7 +91,6 @@ class PasscodePresenter {
         }, unlocked: {
                 self.dismiss()
         })
-        
         passcodeLockViewController.cancelButtonEnabled = true
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
@@ -117,6 +98,24 @@ class PasscodePresenter {
     func dismiss() {
         passcodeLockWindow.hidden = true
         presentedWindow?.becomeKeyWindow()
+    }
+    
+    private func screenshotAndPresentNewWindow() -> UIImageView? {
+        presentedWindow = UIApplication.sharedApplication().keyWindow
+        guard let presentedWindow = presentedWindow else {
+            return nil
+        }
+        
+        let imageView = UIImageView(image: presentedWindow.screenShotView())
+        
+        presentedWindow.windowLevel = 1
+        presentedWindow.endEditing(true)
+        
+        passcodeLockWindow = UIWindow(frame: UIScreen.mainScreen().bounds)
+        passcodeLockWindow.windowLevel = 2
+        passcodeLockWindow.makeKeyAndVisible()
+        
+        return imageView
     }
 }
 

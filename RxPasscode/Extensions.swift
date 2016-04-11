@@ -33,6 +33,14 @@ extension UIView {
         return (x,y)
     }
     
+    func pinBottomRight(subview: UIView, horizontalOffset: CGFloat, verticalOffset: CGFloat) {
+        addSubview(subview)
+        let right = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.Trailing, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Trailing, multiplier: 1.0, constant: horizontalOffset)
+        addConstraint(right)
+        let bottom = NSLayoutConstraint(item: subview, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: self, attribute: NSLayoutAttribute.Bottom, multiplier: 1.0, constant: verticalOffset)
+        addConstraint(bottom)
+    }
+    
     func screenShotView() -> UIImage {
         let scale = UIScreen.mainScreen().scale
         UIGraphicsBeginImageContextWithOptions(layer.frame.size, false, scale);

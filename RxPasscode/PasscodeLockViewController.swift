@@ -35,6 +35,7 @@ class PasscodeLockViewController: UIViewController {
     }
     
     var cancelButtonEnabled = false
+    var cancelButton: UIButton!
     var titleLabel: UILabel!
     var passcodeButtons: [PasscodeNumberButton] = []
     var passcodeNumberInputtedViews: [PasscodeNumberInputted] = []
@@ -75,6 +76,16 @@ class PasscodeLockViewController: UIViewController {
         titleLabel.textColor = UIColor.whiteColor()
         view.pinCenter(titleLabel, horizontalOffset: 0, verticalOffset:titleLabelYOffset)
         
+        if cancelButtonEnabled {
+            cancelButton = UIButton(type: .Custom)
+            cancelButton.setTitle(NSLocalizedString("Cancel", comment: ""), forState: .Normal)
+            cancelButton.translatesAutoresizingMaskIntoConstraints = false
+            cancelButton.rx_tap.subscribeNext { [weak self] in
+                self?.unlocked()
+            }.addDisposableTo(disposeBag)
+            view.pinBottomRight(cancelButton, horizontalOffset:-20, verticalOffset:-20)
+        }
+        
         let passcodeLayoutItems: [PasscodeButtonConfig] = [
             (1, -1, -1), (2, 0, -1), (3, 1, -1),
             (4, -1, 0), (5, 0, 0), (6, 1, 0),
@@ -83,9 +94,12 @@ class PasscodeLockViewController: UIViewController {
         for (number, x, y) in passcodeLayoutItems {
             let button = createButtonWithOffset("\(number)", horizontalOffset: x, verticalOffset: y)
             passcodeButtons.append(button)
-            button.rx_tap.subscribeNext {
-                if self.passcodeNumbers.value.count < passcodeNumbersRequired {
-                    self.passcodeNumbers.value.append(number)
+            button.rx_tap.subscribeNext { [weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                if strongSelf.passcodeNumbers.value.count < passcodeNumbersRequired {
+                    strongSelf.passcodeNumbers.value.append(number)
                 }
             }.addDisposableTo(disposeBag)
         }
@@ -97,11 +111,15 @@ class PasscodeLockViewController: UIViewController {
         
         //MARK: RX Events
         
-        passcodeNumbers.asObservable().subscribeNext { numbers in
+        passcodeNumbers.asObservable().subscribeNext { [weak self] numbers in
+            guard let strongSelf = self else {
+                return
+            }
+
             if numbers.count > 0 {
-                self.passcodeNumberInputtedViews[numbers.count-1].animateToState(.Active)
+                strongSelf.passcodeNumberInputtedViews[numbers.count-1].animateToState(.Active)
             } else {
-                for view in self.passcodeNumberInputtedViews {
+                for view in strongSelf.passcodeNumberInputtedViews {
                     view.animateToState(.Inactive)
                 }
             }
