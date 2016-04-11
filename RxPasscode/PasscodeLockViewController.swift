@@ -27,17 +27,25 @@ class PasscodeLockViewController: UIViewController {
     
     typealias PasscodeButtonConfig = (number: Int, xOffset: CGFloat, yOffset: CGFloat)
     
+    enum PasscodeResponse {
+        case Invalid
+        case ReEnter
+        case EnterNew
+        case Accepted
+    }
+    
+    var cancelButtonEnabled = false
     var titleLabel: UILabel!
     var passcodeButtons: [PasscodeNumberButton] = []
     var passcodeNumberInputtedViews: [PasscodeNumberInputted] = []
     var passcodeNumbers: Variable<[Int]> = Variable([Int]())
     var disposeBag: DisposeBag = DisposeBag()
-    let validateCode: ([Int] -> Bool)
+    let validateCode: ([Int] -> PasscodeResponse)
     let unlocked: (Void -> Void)
     
     private let titleLabelYOffset: CGFloat = -210
     
-    init(backgroundView: UIView, validateCode: ([Int] -> Bool), unlocked: (Void -> Void)) {
+    init(backgroundView: UIView, validateCode: ([Int] -> PasscodeResponse), unlocked: (Void -> Void)) {
         self.backgroundView = backgroundView
         self.validateCode = validateCode
         self.unlocked = unlocked
@@ -105,11 +113,19 @@ class PasscodeLockViewController: UIViewController {
     }
     
     func validatePasscode(numbers: [Int]) {
-        if validateCode(numbers) {
-            animateDismissal()
-        } else {
-            animateIncorrectPasscode()
-            passcodeNumbers.value = []
+        switch validateCode(numbers) {
+            case .Accepted:
+                animateDismissal()
+            case .ReEnter:
+                titleLabel.text = NSLocalizedString("Re-enter passcode", comment: "")
+                passcodeNumbers.value = []
+            case .EnterNew:
+                titleLabel.text = NSLocalizedString("Enter new passcode", comment: "")
+                passcodeNumbers.value = []
+            case .Invalid:
+                animateIncorrectPasscode()
+                passcodeNumbers.value = []
+            
         }
     }
     

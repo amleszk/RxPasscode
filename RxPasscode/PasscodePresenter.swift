@@ -26,10 +26,10 @@ class PasscodePresenter {
         return UIApplication.sharedApplication().keyWindow == passcodeLockWindow
     }
     
-    func presentInKeyWindow() {
+    private func presentInKeyWindow() -> UIImageView? {
         presentedWindow = UIApplication.sharedApplication().keyWindow
         guard let presentedWindow = presentedWindow else {
-            return
+            return nil
         }
         
         let imageView = UIImageView(image: presentedWindow.screenShotView())
@@ -37,24 +37,85 @@ class PasscodePresenter {
         presentedWindow.windowLevel = 1
         presentedWindow.endEditing(true)
         
-        passcodeLockWindow = PasscodeWindow(frame: UIScreen.mainScreen().bounds)
+        passcodeLockWindow = UIWindow(frame: UIScreen.mainScreen().bounds)
         passcodeLockWindow.windowLevel = 2
         passcodeLockWindow.makeKeyAndVisible()
         
+        return imageView
+    }
+
+    func presentWithValidatePasscode() {
+        guard let imageView = presentInKeyWindow() else {
+            return
+        }
         let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
-            return true
+            //TODO: check keychain for existing passcode
+            return .Accepted
         }, unlocked: {
             self.dismiss()
         })
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
-    
+
+    func presentWithNewPasscode() {
+        guard let imageView = presentInKeyWindow() else {
+            return
+        }
+        var newPasscode: [Int] = []
+        let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
+            if newPasscode.count == 0 {
+                newPasscode = passcode
+                return .ReEnter
+            } else if newPasscode == passcode {
+                //TODO: save passcode in keychain
+                return .Accepted
+            } else {
+                return .Invalid
+            }
+        }, unlocked: {
+            self.dismiss()
+        })
+        passcodeLockViewController.cancelButtonEnabled = true
+        passcodeLockWindow.rootViewController = passcodeLockViewController
+    }
+
+    func presentWithChangePasscode() {
+        guard let imageView = presentInKeyWindow() else {
+            return
+        }
+        let existingPasscode: [Int] = [1,2,3,4]
+        var validated = false
+        var newPasscode: [Int] = []
+        let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
+            if !validated {
+                if existingPasscode == passcode {
+                    validated = true
+                    return .EnterNew
+                } else {
+                    return .Invalid
+                }
+            } else {
+                if newPasscode.count == 0 {
+                    newPasscode = passcode
+                    return .ReEnter
+                } else if newPasscode == passcode {
+                    //TODO: save passcode in keychain
+                    return .Accepted
+                } else {
+                    return .Invalid
+                }
+            }
+        }, unlocked: {
+                self.dismiss()
+        })
+        
+        passcodeLockViewController.cancelButtonEnabled = true
+        passcodeLockWindow.rootViewController = passcodeLockViewController
+    }
+
     func dismiss() {
         passcodeLockWindow.hidden = true
         presentedWindow?.becomeKeyWindow()
     }
 }
 
-class PasscodeWindow : UIWindow {
-    
-}
