@@ -1,8 +1,8 @@
 
 import UIKit
 
-private let blurCallbackInterval: NSTimeInterval = 0.01
-private let blurCallbackTrailoff: CGFloat = 0.5
+private let blurCallbackInterval: NSTimeInterval = 0.05
+private let blurCallbackBlurReductionSpeed: CGFloat = 1.5
 private let invalidShakeXOffset: CGFloat = -40
 
 extension PasscodeLockViewController {
@@ -27,13 +27,12 @@ extension PasscodeLockViewController {
     }
     
     func animateDismissal() {
-        frostView.liveBlurring = true
         
         let timer = NSTimer(timeInterval: blurCallbackInterval, target: self, selector: #selector(PasscodeLockViewController.reduceFrostingBlurRadius), userInfo: nil, repeats: true)
         NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
         
         UIView.animateWithDuration(
-            1.0,
+            0.3,
             delay: 0,
             options: [.CurveEaseInOut],
             animations: {
@@ -46,15 +45,17 @@ extension PasscodeLockViewController {
                 self.titleLabel.alpha = 0
                 self.dimmingView.alpha = 0
             },
-            completion: { _ in
-                timer.invalidate()
-                self.frostView.liveBlurring = false
-                self.unlocked()
-        })
+            completion: nil)
+        
         
     }
     
-    func reduceFrostingBlurRadius() {
-        frostView.blurRadius = frostView.blurRadius - blurCallbackTrailoff
+    func reduceFrostingBlurRadius(timer: NSTimer) {
+        frostView.blurRadius = max(0,frostView.blurRadius - blurCallbackBlurReductionSpeed)
+        frostView.blurOnceIfPossible()
+        if frostView.blurRadius == 0 {
+            timer.invalidate()
+            self.unlocked()
+        }
     }
 }

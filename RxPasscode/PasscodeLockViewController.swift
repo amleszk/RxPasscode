@@ -14,6 +14,7 @@ class PasscodeLockViewController: UIViewController {
         frostView.translatesAutoresizingMaskIntoConstraints = false
         frostView.blurRadius = 15
         frostView.scaleFactor = 1
+        frostView.liveBlurring = false
         return frostView
     }()
     
@@ -61,6 +62,10 @@ class PasscodeLockViewController: UIViewController {
         return UIInterfaceOrientationMask.Portrait
     }
     
+    override func viewDidAppear(animated: Bool) {
+        frostView.blurOnceIfPossible()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -81,7 +86,7 @@ class PasscodeLockViewController: UIViewController {
             cancelButton.setTitle(NSLocalizedString("Cancel", comment: ""), forState: .Normal)
             cancelButton.translatesAutoresizingMaskIntoConstraints = false
             cancelButton.rx_tap.subscribeNext { [weak self] in
-                self?.unlocked()
+                self?.animateDismissal()
             }.addDisposableTo(disposeBag)
             view.pinBottomRight(cancelButton, horizontalOffset:-20, verticalOffset:-20)
         }

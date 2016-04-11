@@ -30,9 +30,20 @@ class PasscodePresenter {
         guard let imageView = screenshotAndPresentNewWindow() else {
             return
         }
+        var numberOfTries = 0
+        let maxPasscodeTries = 3
+        let existingPasscode: [Int] = [1,2,3,4]
         let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
             //TODO: check keychain for existing passcode
-            return .Accepted
+            if passcode == existingPasscode {
+                return .Accepted
+            } else {
+                numberOfTries += 1
+                if numberOfTries >= maxPasscodeTries {
+                    
+                }
+                return .Invalid
+            }
         }, unlocked: {
             self.dismiss()
         })
@@ -94,9 +105,14 @@ class PasscodePresenter {
         passcodeLockViewController.cancelButtonEnabled = true
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
+    
+    func presentTooManyTriesAlert() {
+        
+    }
 
     func dismiss() {
         passcodeLockWindow.hidden = true
+        passcodeLockWindow.rootViewController = nil
         presentedWindow?.becomeKeyWindow()
     }
     
