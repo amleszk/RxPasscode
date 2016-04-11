@@ -9,7 +9,7 @@ private let passcodeNumbersRequired: Int = 4
 class PasscodeLockViewController: UIViewController {
     
     let backgroundView: UIView
-    private lazy var frostView: LFGlassView = {
+    internal lazy var frostView: LFGlassView = {
         let frostView = LFGlassView()
         frostView.translatesAutoresizingMaskIntoConstraints = false
         frostView.blurRadius = 15
@@ -17,7 +17,7 @@ class PasscodeLockViewController: UIViewController {
         return frostView
     }()
     
-    private lazy var dimmingView: UIView = {
+    internal lazy var dimmingView: UIView = {
         let dimmingView = UIView()
         dimmingView.translatesAutoresizingMaskIntoConstraints = false
         dimmingView.backgroundColor = UIColor.blackColor()
@@ -54,6 +54,10 @@ class PasscodeLockViewController: UIViewController {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.Portrait
     }
     
     override func viewDidLoad() {
@@ -134,61 +138,7 @@ class PasscodeLockViewController: UIViewController {
     func highlightNextNumberInputtedView(viewIndex: Int) {
         passcodeNumberInputtedViews[viewIndex].animateToState(.Active)
     }
-    
-    func animateIncorrectPasscode() {
-        for view in self.passcodeNumberInputtedViews {
-            view.transform = CGAffineTransformMakeTranslation(-40, 0)
-        }
-
-        UIView.animateWithDuration(
-            0.5,
-            delay: 0,
-            usingSpringWithDamping: 0.2,
-            initialSpringVelocity: 0,
-            options: [],
-            animations: {
-                for view in self.passcodeNumberInputtedViews {
-                    view.transform = CGAffineTransformIdentity
-                }
-            },
-            completion: nil)
-    }
-    
-    private let blurCallbackInterval: NSTimeInterval = 0.01
-    private let blurCallbackTrailoff: CGFloat = 0.5
-    
-    func animateDismissal() {
-        frostView.liveBlurring = true
         
-        let timer = NSTimer(timeInterval: blurCallbackInterval, target: self, selector: #selector(PasscodeLockViewController.reduceFrostingBlurRadius), userInfo: nil, repeats: true)
-        NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
-
-        UIView.animateWithDuration(
-            1.0,
-            delay: 0,
-            options: [.CurveEaseInOut],
-            animations: {
-                for view in self.passcodeNumberInputtedViews {
-                    view.alpha = 0
-                }
-                for view in self.passcodeButtons {
-                    view.alpha = 0
-                }
-                self.titleLabel.alpha = 0
-                self.dimmingView.alpha = 0
-            },
-            completion: { _ in
-                timer.invalidate()
-                self.frostView.liveBlurring = false
-                self.unlocked()
-        })
-        
-    }
-    
-    func reduceFrostingBlurRadius() {
-        frostView.blurRadius = frostView.blurRadius - blurCallbackTrailoff
-    }
-    
     //MARK: Helpers for button creation and layout
     
     private let horizontalButtonSpacing: CGFloat = 91
@@ -213,10 +163,6 @@ class PasscodeLockViewController: UIViewController {
         input.translatesAutoresizingMaskIntoConstraints = false
         view.pinCenter(input, horizontalOffset: horizontalOffset*inputXOffset, verticalOffset: inputYOffset)
         return input
-    }
-    
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.Portrait
     }
     
 }

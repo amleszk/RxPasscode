@@ -17,7 +17,7 @@ class PasscodePresenter {
     func hookApplicationWillResignActive() {
         NSNotificationCenter.defaultCenter().rx_notification(UIApplicationWillResignActiveNotification).subscribeNext { _ in
             if !PasscodePresenter.sharedInstance.isShowingPasscode() {
-                PasscodePresenter.sharedInstance.presentInKeyWindow()
+                PasscodePresenter.sharedInstance.presentWithValidatePasscode()
             }
         }.addDisposableTo(disposeBag)
     }
@@ -26,7 +26,7 @@ class PasscodePresenter {
         return UIApplication.sharedApplication().keyWindow == passcodeLockWindow
     }
     
-    private func presentInKeyWindow() -> UIImageView? {
+    private func screenshotAndPresentNewWindow() -> UIImageView? {
         presentedWindow = UIApplication.sharedApplication().keyWindow
         guard let presentedWindow = presentedWindow else {
             return nil
@@ -45,7 +45,7 @@ class PasscodePresenter {
     }
 
     func presentWithValidatePasscode() {
-        guard let imageView = presentInKeyWindow() else {
+        guard let imageView = screenshotAndPresentNewWindow() else {
             return
         }
         let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
@@ -58,7 +58,7 @@ class PasscodePresenter {
     }
 
     func presentWithNewPasscode() {
-        guard let imageView = presentInKeyWindow() else {
+        guard let imageView = screenshotAndPresentNewWindow() else {
             return
         }
         var newPasscode: [Int] = []
@@ -80,9 +80,10 @@ class PasscodePresenter {
     }
 
     func presentWithChangePasscode() {
-        guard let imageView = presentInKeyWindow() else {
+        guard let imageView = screenshotAndPresentNewWindow() else {
             return
         }
+        //TODO: stubbed
         let existingPasscode: [Int] = [1,2,3,4]
         var validated = false
         var newPasscode: [Int] = []
@@ -99,7 +100,7 @@ class PasscodePresenter {
                     newPasscode = passcode
                     return .ReEnter
                 } else if newPasscode == passcode {
-                    //TODO: save passcode in keychain
+                    //TODO: save passcode in keychain 'newPasscode'
                     return .Accepted
                 } else {
                     return .Invalid
