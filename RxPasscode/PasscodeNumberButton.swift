@@ -36,6 +36,9 @@ class PasscodeNumberButton: UIButton, PasscodeStyleView {
     }
     
     internal func handleTouchUp() {
-        animateToState(.Inactive)
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.07 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            self.animateToState(.Inactive)
+        }
     }
 }

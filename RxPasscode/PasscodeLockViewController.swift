@@ -12,7 +12,7 @@ class PasscodeLockViewController: UIViewController {
     private lazy var frostView: LFGlassView = {
         let frostView = LFGlassView()
         frostView.translatesAutoresizingMaskIntoConstraints = false
-        frostView.blurRadius = 11
+        frostView.blurRadius = 15
         frostView.scaleFactor = 1
         return frostView
     }()
@@ -25,14 +25,17 @@ class PasscodeLockViewController: UIViewController {
         return dimmingView
     }()
     
-    typealias PasscodeLayoutItem = (number: Int, xOffset: CGFloat, yOffset: CGFloat)
+    typealias PasscodeButtonConfig = (number: Int, xOffset: CGFloat, yOffset: CGFloat)
     
+    var titleLabel: UILabel!
     var passcodeButtons: [PasscodeNumberButton] = []
     var passcodeNumberInputtedViews: [PasscodeNumberInputted] = []
     var passcodeNumbers: Variable<[Int]> = Variable([Int]())
     var disposeBag: DisposeBag = DisposeBag()
     let validateCode: ([Int] -> Bool)
     let unlocked: (Void -> Void)
+    
+    private let titleLabelYOffset: CGFloat = -210
     
     init(backgroundView: UIView, validateCode: ([Int] -> Bool), unlocked: (Void -> Void)) {
         self.backgroundView = backgroundView
@@ -52,7 +55,15 @@ class PasscodeLockViewController: UIViewController {
         view.pinView(dimmingView)
         view.pinView(frostView)
         
-        let passcodeLayoutItems: [PasscodeLayoutItem] = [
+        //MARK: Layout
+        
+        titleLabel = UILabel(frame: CGRectZero)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.text = NSLocalizedString("Enter passcode", comment: "")
+        titleLabel.textColor = UIColor.whiteColor()
+        view.pinCenter(titleLabel, horizontalOffset: 0, verticalOffset:titleLabelYOffset)
+        
+        let passcodeLayoutItems: [PasscodeButtonConfig] = [
             (1, -1, -1), (2, 0, -1), (3, 1, -1),
             (4, -1, 0), (5, 0, 0), (6, 1, 0),
             (7, -1, 1), (8, 0, 1), (9, 1, 1),
@@ -71,6 +82,8 @@ class PasscodeLockViewController: UIViewController {
         for inputOffset in inputOffsets {
             passcodeNumberInputtedViews.append(createInputWithOffset(inputOffset))
         }
+        
+        //MARK: RX Events
         
         passcodeNumbers.asObservable().subscribeNext { numbers in
             if numbers.count > 0 {
@@ -145,10 +158,12 @@ class PasscodeLockViewController: UIViewController {
                 for view in self.passcodeButtons {
                     view.alpha = 0
                 }
+                self.titleLabel.alpha = 0
                 self.dimmingView.alpha = 0
             },
             completion: { _ in
                 timer.invalidate()
+                self.frostView.liveBlurring = false
                 self.unlocked()
         })
         
@@ -158,7 +173,7 @@ class PasscodeLockViewController: UIViewController {
         frostView.blurRadius = frostView.blurRadius - blurCallbackTrailoff
     }
     
-    //MARK: Sub view creation and layout
+    //MARK: Helpers for button creation and layout
     
     private let horizontalButtonSpacing: CGFloat = 91
     private let verticalButtonSpacing: CGFloat = 91
