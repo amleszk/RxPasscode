@@ -1,6 +1,5 @@
 
 import UIKit
-import LiveFrost
 import RxSwift
 import RxCocoa
 
@@ -9,12 +8,8 @@ private let passcodeNumbersRequired: Int = 4
 class PasscodeLockViewController: UIViewController {
     
     let backgroundView: UIView
-    internal lazy var frostView: LFGlassView = {
-        let frostView = LFGlassView()
-        frostView.translatesAutoresizingMaskIntoConstraints = false
-        frostView.blurRadius = 15
-        frostView.scaleFactor = 1
-        frostView.liveBlurring = false
+    internal lazy var frostView: RxGlassView = {
+        let frostView = RxGlassView(frame:CGRectZero)
         return frostView
     }()
     

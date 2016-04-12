@@ -19,6 +19,7 @@
 		61ABF04B1CBABB3A00D1B443 /* PasscodeStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61ABF04A1CBABB3A00D1B443 /* PasscodeStyleView.swift */; };
 		61ABF04D1CBABB6C00D1B443 /* PasscodeNumberInputted.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61ABF04C1CBABB6C00D1B443 /* PasscodeNumberInputted.swift */; };
 		61ABF0551CBBFF7500D1B443 /* PasscodeLockViewController+Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61ABF0541CBBFF7500D1B443 /* PasscodeLockViewController+Animations.swift */; };
+		61ABF0BC1CBD732900D1B443 /* RxGlassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61ABF0BB1CBD732900D1B443 /* RxGlassView.swift */; };
 		821815A7A0F65AF748F9E7E0 /* Pods_RxPasscode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4551E770E265DFC12E1794 /* Pods_RxPasscode.framework */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		61ABF04A1CBABB3A00D1B443 /* PasscodeStyleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeStyleView.swift; sourceTree = "<group>"; };
 		61ABF04C1CBABB6C00D1B443 /* PasscodeNumberInputted.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeNumberInputted.swift; sourceTree = "<group>"; };
 		61ABF0541CBBFF7500D1B443 /* PasscodeLockViewController+Animations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PasscodeLockViewController+Animations.swift"; sourceTree = "<group>"; };
+		61ABF0BB1CBD732900D1B443 /* RxGlassView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxGlassView.swift; sourceTree = "<group>"; };
 		6427CC487F6ACF74BB2E24F9 /* Pods-RxPasscode.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxPasscode.release.xcconfig"; path = "Pods/Target Support Files/Pods-RxPasscode/Pods-RxPasscode.release.xcconfig"; sourceTree = "<group>"; };
 		C150201CA9E2424BBDEFD3A7 /* Pods-RxPasscode.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxPasscode.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RxPasscode/Pods-RxPasscode.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -94,6 +96,7 @@
 				61ABF04C1CBABB6C00D1B443 /* PasscodeNumberInputted.swift */,
 				61ABF04A1CBABB3A00D1B443 /* PasscodeStyleView.swift */,
 				61946EFA1CBA001000C86F46 /* PasscodeNumberButton.swift */,
+				61ABF0BB1CBD732900D1B443 /* RxGlassView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61946EFB1CBA001000C86F46 /* PasscodeNumberButton.swift in Sources */,
+				61ABF0BC1CBD732900D1B443 /* RxGlassView.swift in Sources */,
 				61946EF91CB9F99200C86F46 /* Extensions.swift in Sources */,
 				61946EF71CB9F96100C86F46 /* PasscodePresenter.swift in Sources */,
 				611ED1171CB70D39005B5563 /* ViewController.swift in Sources */,
