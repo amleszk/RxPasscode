@@ -24,10 +24,10 @@ extension PasscodeLockViewController {
             completion: nil)
     }
     
-    func animateDismissal() {
+    func animateDismissal(didCancel: Bool = false) {
         
         frostView.unBlurAnimated {
-            self.unlocked()
+            self.unlocked(didCancel)
         }
         
         UIView.animateWithDuration(

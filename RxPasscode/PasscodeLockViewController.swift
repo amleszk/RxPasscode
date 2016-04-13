@@ -38,11 +38,12 @@ class PasscodeLockViewController: UIViewController {
     var passcodeNumbers: Variable<[Int]> = Variable([Int]())
     var disposeBag: DisposeBag = DisposeBag()
     let validateCode: ([Int] -> PasscodeResponse)
-    let unlocked: (Void -> Void)
+    let unlocked: (Bool -> Void)
+    var statusBarStyle: UIStatusBarStyle = UIStatusBarStyle.Default
     
     private let titleLabelYOffset: CGFloat = -210
     
-    init(backgroundView: UIView, validateCode: ([Int] -> PasscodeResponse), unlocked: (Void -> Void)) {
+    init(backgroundView: UIView, validateCode: ([Int] -> PasscodeResponse), unlocked: (Bool -> Void)) {
         self.backgroundView = backgroundView
         self.validateCode = validateCode
         self.unlocked = unlocked
@@ -55,6 +56,10 @@ class PasscodeLockViewController: UIViewController {
 
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.Portrait
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return statusBarStyle
     }
     
     override func viewDidLoad() {
@@ -77,7 +82,7 @@ class PasscodeLockViewController: UIViewController {
             cancelButton.setTitle(NSLocalizedString("Cancel", comment: ""), forState: .Normal)
             cancelButton.translatesAutoresizingMaskIntoConstraints = false
             cancelButton.rx_tap.subscribeNext { [weak self] in
-                self?.animateDismissal()
+                self?.animateDismissal(true)
             }.addDisposableTo(disposeBag)
             view.pinBottomRight(cancelButton, horizontalOffset:-20, verticalOffset:-20)
         }
