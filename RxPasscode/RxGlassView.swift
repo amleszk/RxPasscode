@@ -3,9 +3,12 @@ import Foundation
 import LiveFrost
 
 private let blurCallbackInterval: NSTimeInterval = 0.05
-private let blurCallbackBlurReductionSpeed: CGFloat = 1.5
+private let blurAnimationTime: NSTimeInterval = 0.3
 
 class RxGlassView : LFGlassView {
+    
+    var startingBlurRadius: CGFloat = 0
+    var endingTime: NSTimeInterval = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,12 +27,16 @@ class RxGlassView : LFGlassView {
     func unBlurAnimated(completion: (Void -> Void)) {
         liveBlurring = false
         fadeoutCompletion = completion
+        startingBlurRadius = blurRadius
+        endingTime = NSDate().timeIntervalSince1970+blurAnimationTime
         let timer = NSTimer(timeInterval: blurCallbackInterval, target: self, selector: #selector(RxGlassView.reduceFrostingBlurRadius), userInfo: nil, repeats: true)
         NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
     }
     
     func reduceFrostingBlurRadius(timer: NSTimer) {
-        blurRadius = max(0,blurRadius - blurCallbackBlurReductionSpeed)
+        let percentageComplete = CGFloat((endingTime-NSDate().timeIntervalSince1970)/blurAnimationTime)
+        blurRadius = max(0,startingBlurRadius*percentageComplete)
+        self.alpha = percentageComplete
         blurOnceIfPossible()
         if blurRadius == 0 {
             timer.invalidate()
