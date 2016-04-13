@@ -3,14 +3,20 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class PasscodePresenter {
+internal let privateSharedInstance = PasscodePresenter()
+
+class PasscodePresenter: NSObject {
     
     private var presentedWindow: UIWindow?
     private var passcodeLockWindow: UIWindow!
     private var disposeBag: DisposeBag = DisposeBag()
-    static let sharedInstance = PasscodePresenter()
     
-    init() {
+    class var sharedInstance: PasscodePresenter {
+        return privateSharedInstance
+    }
+    
+    override init() {
+        super.init()
         hookApplicationWillResignActive()
     }
     
@@ -19,7 +25,7 @@ class PasscodePresenter {
             if !PasscodePresenter.sharedInstance.isShowingPasscode() {
                 PasscodePresenter.sharedInstance.presentWithValidatePasscode()
             }
-        }.addDisposableTo(disposeBag)
+            }.addDisposableTo(disposeBag)
     }
     
     func isShowingPasscode() -> Bool {
@@ -44,12 +50,12 @@ class PasscodePresenter {
                 }
                 return .Invalid
             }
-        }, unlocked: {
-            self.dismiss()
+            }, unlocked: {
+                self.dismiss()
         })
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
-
+    
     func presentWithNewPasscode() {
         guard let imageView = screenshotAndPresentNewWindow() else {
             return
@@ -65,13 +71,13 @@ class PasscodePresenter {
             } else {
                 return .Invalid
             }
-        }, unlocked: {
-            self.dismiss()
+            }, unlocked: {
+                self.dismiss()
         })
         passcodeLockViewController.cancelButtonEnabled = true
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
-
+    
     func presentWithChangePasscode() {
         guard let imageView = screenshotAndPresentNewWindow() else {
             return
@@ -99,7 +105,7 @@ class PasscodePresenter {
                     return .Invalid
                 }
             }
-        }, unlocked: {
+            }, unlocked: {
                 self.dismiss()
         })
         passcodeLockViewController.cancelButtonEnabled = true
@@ -109,7 +115,7 @@ class PasscodePresenter {
     func presentTooManyTriesAlert() {
         
     }
-
+    
     func dismiss() {
         passcodeLockWindow.hidden = true
         passcodeLockWindow.rootViewController = nil
@@ -134,4 +140,3 @@ class PasscodePresenter {
         return imageView
     }
 }
-
