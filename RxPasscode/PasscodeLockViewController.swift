@@ -9,7 +9,7 @@ class PasscodeLockViewController: UIViewController {
     
     let backgroundView: UIView
     internal lazy var frostView: RxGlassView = {
-        let frostView = RxGlassView(frame:CGRectZero)
+        let frostView = RxGlassView(frame:CGRect(origin: CGPointZero, size: UIScreen.mainScreen().bounds.size))
         return frostView
     }()
     
@@ -55,10 +55,6 @@ class PasscodeLockViewController: UIViewController {
 
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.Portrait
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        frostView.blurOnceIfPossible()
     }
     
     override func viewDidLoad() {
