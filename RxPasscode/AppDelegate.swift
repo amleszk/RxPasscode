@@ -9,13 +9,15 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, PasscodeDatasource {
 
     var window: UIWindow?
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        PasscodePresenter.sharedInstance.hookApplicationWillResignActive()
+        PasscodePresenter.sharedInstance.passcodeDatasource = self
         return true
     }
 
@@ -46,6 +48,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return UIInterfaceOrientationMask.Portrait
         }
         return UIInterfaceOrientationMask.All
+    }
+    
+    //MARK: PasscodeDatasource
+    
+    func passcode() -> [Int] {
+        return [1,2,3,4]
+    }
+    func didSetNewPasscode(passcode: [Int]) {
+        print("New passcode \(passcode)")
+    }
+    func didFailAllPasscodeAttempts() {
+        exit(0)
     }
 }
 

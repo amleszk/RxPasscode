@@ -30,7 +30,6 @@ class PasscodePresenter: NSObject {
     
     override init() {
         super.init()
-        hookApplicationWillResignActive()
     }
     
     func hookApplicationWillResignActive() {
@@ -38,7 +37,7 @@ class PasscodePresenter: NSObject {
             if !PasscodePresenter.sharedInstance.isShowingPasscode() {
                 PasscodePresenter.sharedInstance.presentWithValidatePasscode()
             }
-            }.addDisposableTo(disposeBag)
+        }.addDisposableTo(disposeBag)
     }
     
     func isShowingPasscode() -> Bool {
@@ -46,18 +45,19 @@ class PasscodePresenter: NSObject {
     }
     
     func presentWithValidatePasscode(allowCancel: Bool = false, completion: PresentationCompletion? = nil) {
-        guard let imageView = screenshotAndPresentNewWindow() else {
+        guard   let imageView = screenshotAndPresentNewWindow(),
+                let passcodeDatasource = passcodeDatasource else {
             return
         }
         var numberOfTries = 0
-        let existingPasscode: [Int] = passcodeDatasource!.passcode()
+        let existingPasscode: [Int] = passcodeDatasource.passcode()
         let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
             if passcode == existingPasscode {
                 return .Accepted
             } else {
                 numberOfTries += 1
                 if numberOfTries >= passcodeMaxNumberTries {
-                    self.passcodeDatasource!.didFailAllPasscodeAttempts()
+                    passcodeDatasource.didFailAllPasscodeAttempts()
                 }
                 return .Invalid
             }
@@ -73,8 +73,9 @@ class PasscodePresenter: NSObject {
     }
     
     func presentWithNewPasscode(completion: PresentationCompletion? = nil) {
-        guard let imageView = screenshotAndPresentNewWindow() else {
-            return
+        guard   let imageView = screenshotAndPresentNewWindow(),
+            let passcodeDatasource = passcodeDatasource else {
+                return
         }
         var newPasscode: [Int] = []
         let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
@@ -82,7 +83,7 @@ class PasscodePresenter: NSObject {
                 newPasscode = passcode
                 return .ReEnter
             } else if newPasscode == passcode {
-                self.passcodeDatasource!.didSetNewPasscode(newPasscode)
+                passcodeDatasource.didSetNewPasscode(newPasscode)
                 return .Accepted
             } else {
                 return .Invalid
@@ -99,11 +100,12 @@ class PasscodePresenter: NSObject {
     }
     
     func presentWithChangePasscode(completion: PresentationCompletion? = nil) {
-        guard let imageView = screenshotAndPresentNewWindow() else {
-            return
+        guard   let imageView = screenshotAndPresentNewWindow(),
+            let passcodeDatasource = passcodeDatasource else {
+                return
         }
         var numberOfTries = 0
-        let existingPasscode: [Int] = passcodeDatasource!.passcode()
+        let existingPasscode: [Int] = passcodeDatasource.passcode()
         var validated = false
         var newPasscode: [Int] = []
         let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
@@ -119,12 +121,12 @@ class PasscodePresenter: NSObject {
                     newPasscode = passcode
                     return .ReEnter
                 } else if newPasscode == passcode {
-                    self.passcodeDatasource!.didSetNewPasscode(newPasscode)
+                    passcodeDatasource.didSetNewPasscode(newPasscode)
                     return .Accepted
                 } else {
                     numberOfTries += 1
                     if numberOfTries >= passcodeMaxNumberTries {
-                        self.passcodeDatasource!.didFailAllPasscodeAttempts()
+                        passcodeDatasource.didFailAllPasscodeAttempts()
                     }
                     return .Invalid
                 }
