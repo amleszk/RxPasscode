@@ -25,6 +25,10 @@ class RxGlassView : LFGlassView {
     var fadeoutCompletion: (Void -> Void)?
     
     func unBlurAnimated(completion: (Void -> Void)) {
+        UIView.animateWithDuration(blurAnimationTime) {
+            self.alpha = 0
+        }
+        
         liveBlurring = false
         fadeoutCompletion = completion
         startingBlurRadius = blurRadius

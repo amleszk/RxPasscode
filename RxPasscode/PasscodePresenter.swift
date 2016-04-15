@@ -19,7 +19,7 @@ class PasscodePresenter: NSObject {
     
     private var presentedWindow: UIWindow!
     private var keyWindowSavedWindowLevel: CGFloat!
-    private var passcodeLockWindow: UIWindow!
+    private var passcodeLockWindow: PasscodeWindow!
     private var disposeBag: DisposeBag = DisposeBag()
     
     var passcodeDatasource: PasscodeDatasource?
@@ -44,14 +44,18 @@ class PasscodePresenter: NSObject {
         return UIApplication.sharedApplication().keyWindow == passcodeLockWindow
     }
     
+    func presentWithBlurBackground() {
+        screenshotAndPresentPasscodeWindowIfNeeded()
+    }
+    
     func presentWithValidatePasscode(allowCancel: Bool = false, completion: PresentationCompletion? = nil) {
-        guard   let imageView = screenshotAndPresentNewWindow(),
-                let passcodeDatasource = passcodeDatasource else {
+        screenshotAndPresentPasscodeWindowIfNeeded()
+        guard let passcodeDatasource = passcodeDatasource else {
             return
         }
         var numberOfTries = 0
         let existingPasscode: [Int] = passcodeDatasource.passcode()
-        let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
+        let passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
             if passcode == existingPasscode {
                 return .Accepted
             } else {
@@ -61,9 +65,10 @@ class PasscodePresenter: NSObject {
                 }
                 return .Invalid
             }
-        }, unlocked: { didCancel in
-            completion?(didCancel)
-            self.dismiss()
+        }, dismiss: { didCancel in
+            self.dismiss {
+                completion?(didCancel)
+            }
         })
         if let statusbarStyle = presentedWindow.rootViewController?.preferredStatusBarStyle() {
             passcodeLockViewController.statusBarStyle = statusbarStyle
@@ -73,12 +78,12 @@ class PasscodePresenter: NSObject {
     }
     
     func presentWithNewPasscode(completion: PresentationCompletion? = nil) {
-        guard   let imageView = screenshotAndPresentNewWindow(),
-            let passcodeDatasource = passcodeDatasource else {
-                return
+        screenshotAndPresentPasscodeWindowIfNeeded()
+        guard let passcodeDatasource = passcodeDatasource else {
+            return
         }
         var newPasscode: [Int] = []
-        let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
+        let passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
             if newPasscode.count == 0 {
                 newPasscode = passcode
                 return .ReEnter
@@ -88,9 +93,10 @@ class PasscodePresenter: NSObject {
             } else {
                 return .Invalid
             }
-        }, unlocked: { didCancel in
-            completion?(didCancel)
-            self.dismiss()
+        }, dismiss: { didCancel in
+            self.dismiss {
+                completion?(didCancel)
+            }
         })
         if let statusbarStyle = presentedWindow.rootViewController?.preferredStatusBarStyle() {
             passcodeLockViewController.statusBarStyle = statusbarStyle
@@ -100,15 +106,15 @@ class PasscodePresenter: NSObject {
     }
     
     func presentWithChangePasscode(completion: PresentationCompletion? = nil) {
-        guard   let imageView = screenshotAndPresentNewWindow(),
-            let passcodeDatasource = passcodeDatasource else {
-                return
+        screenshotAndPresentPasscodeWindowIfNeeded()
+        guard let passcodeDatasource = passcodeDatasource else {
+            return
         }
         var numberOfTries = 0
         let existingPasscode: [Int] = passcodeDatasource.passcode()
         var validated = false
         var newPasscode: [Int] = []
-        let passcodeLockViewController = PasscodeLockViewController(backgroundView: imageView, validateCode: { passcode in
+        let passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
             if !validated {
                 if existingPasscode == passcode {
                     validated = true
@@ -131,9 +137,10 @@ class PasscodePresenter: NSObject {
                     return .Invalid
                 }
             }
-        }, unlocked: { didCancel in
-            completion?(didCancel)
-            self.dismiss()
+        }, dismiss: { didCancel in
+            self.dismiss {
+                completion?(didCancel)
+            }
         })
         if let statusbarStyle = presentedWindow.rootViewController?.preferredStatusBarStyle() {
             passcodeLockViewController.statusBarStyle = statusbarStyle
@@ -142,17 +149,23 @@ class PasscodePresenter: NSObject {
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
     
-    func dismiss() {
-        passcodeLockWindow.hidden = true
-        passcodeLockWindow.windowLevel = 0
-        presentedWindow.windowLevel = keyWindowSavedWindowLevel
-        presentedWindow.becomeKeyWindow()
+    func dismiss(completion: ((Void) -> (Void))? = nil) {
+        passcodeLockWindow.unBlurAnimated {
+            self.passcodeLockWindow.hidden = true
+            self.passcodeLockWindow.windowLevel = 0
+            self.presentedWindow.windowLevel = self.keyWindowSavedWindowLevel
+            self.presentedWindow.becomeKeyWindow()
+            completion?()
+        }
     }
     
-    private func screenshotAndPresentNewWindow() -> UIImageView? {
+    private func screenshotAndPresentPasscodeWindowIfNeeded() {
+        if isShowingPasscode() {
+            return
+        }
         presentedWindow = UIApplication.sharedApplication().keyWindow
         guard let presentedWindow = presentedWindow else {
-            return nil
+            return
         }
         
         let imageView = UIImageView(image: presentedWindow.screenShotView())
@@ -161,13 +174,9 @@ class PasscodePresenter: NSObject {
         presentedWindow.windowLevel = 1
         presentedWindow.endEditing(true)
         
-        passcodeLockWindow = PasscodeWindow(frame: UIScreen.mainScreen().bounds)
+        passcodeLockWindow = PasscodeWindow(backgroundView: imageView)
         passcodeLockWindow.windowLevel = 2
+        passcodeLockWindow.rootViewController = HiddenViewController(nibName: nil, bundle: nil)
         passcodeLockWindow.makeKeyAndVisible()
-        return imageView
     }
-}
-
-class PasscodeWindow: UIWindow {
-    
 }

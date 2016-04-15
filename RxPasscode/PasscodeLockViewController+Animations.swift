@@ -26,9 +26,7 @@ extension PasscodeLockViewController {
     
     func animateDismissal(didCancel: Bool = false) {
         
-        frostView.unBlurAnimated {
-            self.unlocked(didCancel)
-        }
+        dismiss(didCancel)
         
         UIView.animateWithDuration(
             0.3,
@@ -42,7 +40,6 @@ extension PasscodeLockViewController {
                     view.alpha = 0
                 }
                 self.titleLabel.alpha = 0
-                self.dimmingView.alpha = 0
             },
             completion: nil)
         

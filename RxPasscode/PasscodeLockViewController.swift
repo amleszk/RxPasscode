@@ -6,21 +6,7 @@ import RxCocoa
 private let passcodeNumbersRequired: Int = 4
 
 class PasscodeLockViewController: UIViewController {
-    
-    let backgroundView: UIView
-    internal lazy var frostView: RxGlassView = {
-        let frostView = RxGlassView(frame:CGRect(origin: CGPointZero, size: UIScreen.mainScreen().bounds.size))
-        return frostView
-    }()
-    
-    internal lazy var dimmingView: UIView = {
-        let dimmingView = UIView()
-        dimmingView.translatesAutoresizingMaskIntoConstraints = false
-        dimmingView.backgroundColor = UIColor.blackColor()
-        dimmingView.alpha = 0.25
-        return dimmingView
-    }()
-    
+        
     typealias PasscodeButtonConfig = (number: Int, xOffset: CGFloat, yOffset: CGFloat)
     
     enum PasscodeResponse {
@@ -38,15 +24,14 @@ class PasscodeLockViewController: UIViewController {
     var passcodeNumbers: Variable<[Int]> = Variable([Int]())
     var disposeBag: DisposeBag = DisposeBag()
     let validateCode: ([Int] -> PasscodeResponse)
-    let unlocked: (Bool -> Void)
+    let dismiss: (Bool -> Void)
     var statusBarStyle: UIStatusBarStyle = UIStatusBarStyle.Default
     
     private let titleLabelYOffset: CGFloat = -210
     
-    init(backgroundView: UIView, validateCode: ([Int] -> PasscodeResponse), unlocked: (Bool -> Void)) {
-        self.backgroundView = backgroundView
+    init(validateCode: ([Int] -> PasscodeResponse), dismiss: (Bool -> Void)) {
         self.validateCode = validateCode
-        self.unlocked = unlocked
+        self.dismiss = dismiss
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,9 +50,6 @@ class PasscodeLockViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.pinView(backgroundView)
-        view.pinView(dimmingView)
-        view.pinView(frostView)
         
         //MARK: Layout
         

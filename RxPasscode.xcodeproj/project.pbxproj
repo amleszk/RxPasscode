@@ -12,6 +12,7 @@
 		611ED11A1CB70D39005B5563 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 611ED1181CB70D39005B5563 /* Main.storyboard */; };
 		611ED11C1CB70D39005B5563 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 611ED11B1CB70D39005B5563 /* Assets.xcassets */; };
 		611ED11F1CB70D39005B5563 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 611ED11D1CB70D39005B5563 /* LaunchScreen.storyboard */; };
+		613660201CC1A926003577A3 /* PasscodeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6136601F1CC1A926003577A3 /* PasscodeWindow.swift */; };
 		61946EF51CB9F93C00C86F46 /* PasscodeLockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61946EF41CB9F93C00C86F46 /* PasscodeLockViewController.swift */; };
 		61946EF71CB9F96100C86F46 /* PasscodePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61946EF61CB9F96100C86F46 /* PasscodePresenter.swift */; };
 		61946EF91CB9F99200C86F46 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61946EF81CB9F99200C86F46 /* Extensions.swift */; };
@@ -32,6 +33,7 @@
 		611ED11B1CB70D39005B5563 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		611ED11E1CB70D39005B5563 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		611ED1201CB70D39005B5563 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6136601F1CC1A926003577A3 /* PasscodeWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeWindow.swift; sourceTree = "<group>"; };
 		61946EF41CB9F93C00C86F46 /* PasscodeLockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeLockViewController.swift; sourceTree = "<group>"; };
 		61946EF61CB9F96100C86F46 /* PasscodePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodePresenter.swift; sourceTree = "<group>"; };
 		61946EF81CB9F99200C86F46 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				61ABF04A1CBABB3A00D1B443 /* PasscodeStyleView.swift */,
 				61946EFA1CBA001000C86F46 /* PasscodeNumberButton.swift */,
 				61ABF0BB1CBD732900D1B443 /* RxGlassView.swift */,
+				6136601F1CC1A926003577A3 /* PasscodeWindow.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -259,6 +262,7 @@
 				61ABF0551CBBFF7500D1B443 /* PasscodeLockViewController+Animations.swift in Sources */,
 				611ED1151CB70D39005B5563 /* AppDelegate.swift in Sources */,
 				61946EF51CB9F93C00C86F46 /* PasscodeLockViewController.swift in Sources */,
+				613660201CC1A926003577A3 /* PasscodeWindow.swift in Sources */,
 				61ABF04D1CBABB6C00D1B443 /* PasscodeNumberInputted.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
