@@ -22,13 +22,13 @@ class PasscodeWindow: UIWindow {
         pinView(dimmingView)
         pinView(frostView)
     }
-    
+        
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func unBlurAnimated(completion: (Void) -> (Void)) {
-        frostView.unBlurAnimated {
+    func fadeOutAnimated(completion: (Void) -> (Void)) {
+        frostView.fadeOutAnimated {
             completion()
         }
     }

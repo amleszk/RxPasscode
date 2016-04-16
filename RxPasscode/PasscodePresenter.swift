@@ -3,7 +3,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-internal let privateSharedInstance = PasscodePresenter()
+internal let passcodePresenterSharedInstance = PasscodePresenter()
 internal let passcodeMaxNumberTries = 3
 
 @objc
@@ -25,7 +25,7 @@ class PasscodePresenter: NSObject {
     var passcodeDatasource: PasscodeDatasource?
     
     class var sharedInstance: PasscodePresenter {
-        return privateSharedInstance
+        return passcodePresenterSharedInstance
     }
     
     override init() {
@@ -150,7 +150,7 @@ class PasscodePresenter: NSObject {
     }
     
     func dismiss(completion: ((Void) -> (Void))? = nil) {
-        passcodeLockWindow.unBlurAnimated {
+        passcodeLockWindow.fadeOutAnimated {
             self.passcodeLockWindow.hidden = true
             self.passcodeLockWindow.windowLevel = 0
             self.presentedWindow.windowLevel = self.keyWindowSavedWindowLevel

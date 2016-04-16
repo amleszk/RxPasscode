@@ -15,7 +15,6 @@ class RxGlassView : LFGlassView {
         translatesAutoresizingMaskIntoConstraints = false
         blurRadius = 15
         scaleFactor = 1
-        liveBlurring = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -23,6 +22,14 @@ class RxGlassView : LFGlassView {
     }
     
     var fadeoutCompletion: (Void -> Void)?
+    
+    func fadeOutAnimated(completion: (Void -> Void)) {
+        UIView.animateWithDuration(blurAnimationTime, animations: {
+            self.alpha = 0
+        }, completion: { _ in
+            completion()
+        })
+    }
     
     func unBlurAnimated(completion: (Void -> Void)) {
         UIView.animateWithDuration(blurAnimationTime) {
