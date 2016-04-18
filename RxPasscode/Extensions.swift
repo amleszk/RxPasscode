@@ -51,4 +51,26 @@ extension UIView {
         
         return screenshot
     }
+    
+    func fadeInAnimated() {
+        self.alpha = 0
+        UIView.animateWithDuration(
+            0.5,
+            delay: 0,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 0.5,
+            options: [.AllowUserInteraction, .BeginFromCurrentState],
+            animations: {
+                self.alpha = 1
+            },
+            completion: nil)
+    }
+    
+    func fadeOutAnimated(completion: (Void -> Void)?) {
+        UIView.animateWithDuration(0.3, animations: {
+            self.alpha = 0
+            }, completion: { _ in
+                completion?()
+        })
+    }
 }
