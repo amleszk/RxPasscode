@@ -3,24 +3,14 @@ import UIKit
 
 class PasscodeWindow: UIWindow {
     
-    internal lazy var frostView: RxGlassView = {
-        let frostView = RxGlassView(frame:CGRect(origin: CGPointZero, size: UIScreen.mainScreen().bounds.size))
-        return frostView
-    }()
-    
-    internal lazy var dimmingView: UIView = {
-        let dimmingView = UIView()
-        dimmingView.translatesAutoresizingMaskIntoConstraints = false
-        dimmingView.backgroundColor = UIColor.blackColor()
-        dimmingView.alpha = 0.25
-        return dimmingView
-    }()
+    let frostView: UIVisualEffectView
     
     init(backgroundView: UIView) {
+        frostView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
+        frostView.translatesAutoresizingMaskIntoConstraints = false
         super.init(frame: UIScreen.mainScreen().bounds)
         pinView(backgroundView)
-        pinView(dimmingView)
-        pinView(frostView)
+        backgroundView.pinView(frostView)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -29,14 +19,12 @@ class PasscodeWindow: UIWindow {
 
     func fadeInBackgroundAnimated() {
         frostView.fadeInAnimated()
-        dimmingView.fadeInAnimated()
     }
 
     func fadeOutBackgroundAnimated(completion: (Void) -> (Void)) {
         frostView.fadeOutAnimated {
             completion()
         }
-        dimmingView.fadeOutAnimated(nil)
     }
 }
 

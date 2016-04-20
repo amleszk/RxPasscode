@@ -179,5 +179,6 @@ class PasscodePresenter: NSObject {
         passcodeLockWindow.rootViewController = HiddenViewController(nibName: nil, bundle: nil)
         passcodeLockWindow.makeKeyAndVisible()
         passcodeLockWindow.fadeInAnimated()
+        passcodeLockWindow.setNeedsDisplay()
     }
 }
