@@ -44,7 +44,7 @@ class PasscodeLockViewController: UIViewController {
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return statusBarStyle
+        return UIStatusBarStyle.LightContent
     }
     
     override func viewDidLoad() {

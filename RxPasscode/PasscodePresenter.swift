@@ -70,9 +70,6 @@ class PasscodePresenter: NSObject {
                 completion?(didCancel)
             }
         })
-        if let statusbarStyle = presentedWindow.rootViewController?.preferredStatusBarStyle() {
-            passcodeLockViewController.statusBarStyle = statusbarStyle
-        }
         passcodeLockViewController.cancelButtonEnabled = allowCancel
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
@@ -98,9 +95,6 @@ class PasscodePresenter: NSObject {
                 completion?(didCancel)
             }
         })
-        if let statusbarStyle = presentedWindow.rootViewController?.preferredStatusBarStyle() {
-            passcodeLockViewController.statusBarStyle = statusbarStyle
-        }
         passcodeLockViewController.cancelButtonEnabled = true
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
@@ -142,9 +136,6 @@ class PasscodePresenter: NSObject {
                 completion?(didCancel)
             }
         })
-        if let statusbarStyle = presentedWindow.rootViewController?.preferredStatusBarStyle() {
-            passcodeLockViewController.statusBarStyle = statusbarStyle
-        }
         passcodeLockViewController.cancelButtonEnabled = true
         passcodeLockWindow.rootViewController = passcodeLockViewController
     }
