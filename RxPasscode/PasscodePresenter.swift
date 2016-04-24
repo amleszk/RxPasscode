@@ -33,7 +33,10 @@ class PasscodePresenter: NSObject {
     }
     
     func hookApplicationWillResignActive() {
-        NSNotificationCenter.defaultCenter().rx_notification(UIApplicationWillResignActiveNotification).subscribeNext { _ in
+        NSNotificationCenter.defaultCenter().rx_notification(UIApplicationDidEnterBackgroundNotification).subscribeNext { _ in
+            PasscodePresenter.sharedInstance.presentWithBlurBackground()
+        }.addDisposableTo(disposeBag)
+        NSNotificationCenter.defaultCenter().rx_notification(UIApplicationWillEnterForegroundNotification).subscribeNext { _ in
             if !PasscodePresenter.sharedInstance.isShowingPasscode() {
                 PasscodePresenter.sharedInstance.presentWithValidatePasscode()
             }
@@ -41,15 +44,15 @@ class PasscodePresenter: NSObject {
     }
     
     func isShowingPasscode() -> Bool {
-        return passcodeView?.window != nil
+        return passcodeLockViewController != nil
     }
-    
+
     func presentWithBlurBackground() {
-        screenshotAndPresentPasscodeWindowIfNeeded()
+        screenshotAndPresentPasscodeObstructionIfNeeded()
     }
     
     func presentWithValidatePasscode(allowCancel: Bool = false, completion: PresentationCompletion? = nil) {
-        screenshotAndPresentPasscodeWindowIfNeeded()
+        screenshotAndPresentPasscodeObstructionIfNeeded()
         guard let passcodeDatasource = passcodeDatasource else {
             return
         }
@@ -75,7 +78,7 @@ class PasscodePresenter: NSObject {
     }
     
     func presentWithNewPasscode(completion: PresentationCompletion? = nil) {
-        screenshotAndPresentPasscodeWindowIfNeeded()
+        screenshotAndPresentPasscodeObstructionIfNeeded()
         guard let passcodeDatasource = passcodeDatasource else {
             return
         }
@@ -100,7 +103,7 @@ class PasscodePresenter: NSObject {
     }
     
     func presentWithChangePasscode(completion: PresentationCompletion? = nil) {
-        screenshotAndPresentPasscodeWindowIfNeeded()
+        screenshotAndPresentPasscodeObstructionIfNeeded()
         guard let passcodeDatasource = passcodeDatasource else {
             return
         }
@@ -154,8 +157,8 @@ class PasscodePresenter: NSObject {
         }
     }
     
-    private func screenshotAndPresentPasscodeWindowIfNeeded() {
-        if isShowingPasscode() {
+    private func screenshotAndPresentPasscodeObstructionIfNeeded() {
+        if passcodeView?.window != nil {
             return
         }
         guard let rootViewController = passcodeDatasource?.rootViewController() else {
