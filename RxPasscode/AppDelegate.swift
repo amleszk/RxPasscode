@@ -61,5 +61,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PasscodeDatasource {
     func didFailAllPasscodeAttempts() {
         exit(0)
     }
+    
+    func rootViewController() -> UIViewController? {
+        return window?.rootViewController
+    }
 }
 

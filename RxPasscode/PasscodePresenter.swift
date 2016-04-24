@@ -11,15 +11,15 @@ protocol PasscodeDatasource: class {
     func passcode() -> [Int]
     func didSetNewPasscode(passcode: [Int])
     func didFailAllPasscodeAttempts()
+    func rootViewController() -> UIViewController?
 }
 
 class PasscodePresenter: NSObject {
     
     typealias PresentationCompletion = (Bool -> Void)
     
-    private var presentedWindow: UIWindow!
-    private var keyWindowSavedWindowLevel: CGFloat!
-    private var passcodeLockWindow: PasscodeWindow!
+    private var passcodeView: PasscodeObstructionView!
+    private var passcodeLockViewController: PasscodeLockViewController!
     private var disposeBag: DisposeBag = DisposeBag()
     
     var passcodeDatasource: PasscodeDatasource?
@@ -41,7 +41,7 @@ class PasscodePresenter: NSObject {
     }
     
     func isShowingPasscode() -> Bool {
-        return UIApplication.sharedApplication().keyWindow == passcodeLockWindow
+        return passcodeView?.window != nil
     }
     
     func presentWithBlurBackground() {
@@ -55,7 +55,7 @@ class PasscodePresenter: NSObject {
         }
         var numberOfTries = 0
         let existingPasscode: [Int] = passcodeDatasource.passcode()
-        let passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
+        passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
             if passcode == existingPasscode {
                 return .Accepted
             } else {
@@ -66,12 +66,12 @@ class PasscodePresenter: NSObject {
                 return .Invalid
             }
         }, dismiss: { didCancel in
-            self.dismiss {
+            self.dismissAnimated(true) {
                 completion?(didCancel)
             }
         })
         passcodeLockViewController.cancelButtonEnabled = allowCancel
-        passcodeLockWindow.rootViewController = passcodeLockViewController
+        passcodeView.pinView(passcodeLockViewController.view)
     }
     
     func presentWithNewPasscode(completion: PresentationCompletion? = nil) {
@@ -80,7 +80,7 @@ class PasscodePresenter: NSObject {
             return
         }
         var newPasscode: [Int] = []
-        let passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
+        passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
             if newPasscode.count == 0 {
                 newPasscode = passcode
                 return .ReEnter
@@ -91,12 +91,12 @@ class PasscodePresenter: NSObject {
                 return .Invalid
             }
         }, dismiss: { didCancel in
-            self.dismiss {
+            self.dismissAnimated(true) {
                 completion?(didCancel)
             }
         })
         passcodeLockViewController.cancelButtonEnabled = true
-        passcodeLockWindow.rootViewController = passcodeLockViewController
+        passcodeView.pinView(passcodeLockViewController.view)
     }
     
     func presentWithChangePasscode(completion: PresentationCompletion? = nil) {
@@ -108,7 +108,7 @@ class PasscodePresenter: NSObject {
         let existingPasscode: [Int] = passcodeDatasource.passcode()
         var validated = false
         var newPasscode: [Int] = []
-        let passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
+        passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
             if !validated {
                 if existingPasscode == passcode {
                     validated = true
@@ -132,21 +132,25 @@ class PasscodePresenter: NSObject {
                 }
             }
         }, dismiss: { didCancel in
-            self.dismiss {
+            self.dismissAnimated(true) {
                 completion?(didCancel)
             }
         })
         passcodeLockViewController.cancelButtonEnabled = true
-        passcodeLockWindow.rootViewController = passcodeLockViewController
+        passcodeView.pinView(passcodeLockViewController.view)
     }
     
-    func dismiss(completion: ((Void) -> (Void))? = nil) {
-        passcodeLockWindow.fadeOutAnimated {
-            self.passcodeLockWindow.hidden = true
-            self.passcodeLockWindow.windowLevel = 0
-            self.presentedWindow.windowLevel = self.keyWindowSavedWindowLevel
-            self.presentedWindow.becomeKeyWindow()
+    func dismissAnimated(animated: Bool, completion: ((Void) -> (Void))? = nil) {
+        let removeView = {
+            self.passcodeView.removeFromSuperview()
+            self.passcodeView = nil;
+            self.passcodeLockViewController = nil;
             completion?()
+        }
+        if animated {
+            passcodeView.fadeOutAnimated(removeView)
+        } else {
+            removeView()
         }
     }
     
@@ -154,22 +158,30 @@ class PasscodePresenter: NSObject {
         if isShowingPasscode() {
             return
         }
-        presentedWindow = UIApplication.sharedApplication().keyWindow
-        guard let presentedWindow = presentedWindow else {
+        guard let rootViewController = passcodeDatasource?.rootViewController() else {
             return
         }
         
-        let imageView = UIImageView(image: presentedWindow.screenShotView())
+        passcodeView = PasscodeObstructionView(backgroundView: generateBackgroundView(rootViewController.view))
+        rootViewController.view.pinView(passcodeView)
+    }
+    
+    ///Older devices cannot render the blur effect fast enough, for those we return a black UIView instance instead
+    private func generateBackgroundView(parentView: UIView) -> UIView {
+        let OneKiloByte: UInt64 = 1024
+        let OneMegaByte: UInt64 = 1024*OneKiloByte
+        let physicalMemoryForBlurredBackground: UInt64 = 512*OneMegaByte
+        let memory = NSProcessInfo.processInfo().physicalMemory
         
-        keyWindowSavedWindowLevel = presentedWindow.windowLevel
-        presentedWindow.windowLevel = 1
-        presentedWindow.endEditing(true)
-        
-        passcodeLockWindow = PasscodeWindow(backgroundView: imageView)
-        passcodeLockWindow.windowLevel = 2
-        passcodeLockWindow.rootViewController = HiddenViewController(nibName: nil, bundle: nil)
-        passcodeLockWindow.makeKeyAndVisible()
-        passcodeLockWindow.fadeInAnimated()
-        passcodeLockWindow.setNeedsDisplay()
+        if (memory > physicalMemoryForBlurredBackground) {
+            let backgroundView = UIImageView(image: parentView.screenShotView())
+            backgroundView.translatesAutoresizingMaskIntoConstraints = false
+            return backgroundView
+        } else {
+            let backgroundView = UIView(frame: .zero)
+            backgroundView.backgroundColor = UIColor.blackColor()
+            backgroundView.translatesAutoresizingMaskIntoConstraints = false
+            return backgroundView
+        }
     }
 }
