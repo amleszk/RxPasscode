@@ -166,6 +166,7 @@ class PasscodePresenter: NSObject {
         }
         
         passcodeView = PasscodeObstructionView(backgroundView: generateBackgroundView(rootViewController.view))
+        passcodeView.translatesAutoresizingMaskIntoConstraints = false
         rootViewController.view.pinView(passcodeView)
     }
     
