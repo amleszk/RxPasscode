@@ -7,6 +7,13 @@ This simple project will display an iOS style passcode screen. There are many pa
 4. Does not include Touch ID support
 4. Default passcode is 1234
 
+The Passcode presentation has 3 scenarios:
+
+1. Validate passcode
+1. Set new passcode
+1. Change existing passcode (Which amounts to Validate => Set new)
+
+
 **RxSwift**: The reactive programming library: https://github.com/ReactiveX/RxSwift  
 
 ![Imgur](http://i.imgur.com/gQ1O2XB.png)
