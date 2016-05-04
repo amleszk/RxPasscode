@@ -64,7 +64,7 @@ class PasscodeLockViewController: UIViewController {
             cancelButton.setTitle(NSLocalizedString("Cancel", comment: ""), forState: .Normal)
             cancelButton.translatesAutoresizingMaskIntoConstraints = false
             cancelButton.rx_tap.subscribeNext { [weak self] in
-                self?.animateDismissal(true)
+                self?.dismiss(true)
             }.addDisposableTo(disposeBag)
             view.pinBottomRight(cancelButton, horizontalOffset:-20, verticalOffset:-20)
         }
@@ -120,7 +120,7 @@ class PasscodeLockViewController: UIViewController {
     func validatePasscode(numbers: [Int]) {
         switch validateCode(numbers) {
             case .Accepted:
-                animateDismissal()
+                dismiss(false)
             case .ReEnter:
                 titleLabel.text = NSLocalizedString("Re-enter passcode", comment: "")
                 passcodeNumbers.value = []

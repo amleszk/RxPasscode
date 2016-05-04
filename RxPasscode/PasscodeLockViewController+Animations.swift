@@ -24,26 +24,5 @@ extension PasscodeLockViewController {
             completion: nil)
     }
     
-    func animateDismissal(didCancel: Bool = false) {
-        
-        dismiss(didCancel)
-        
-        UIView.animateWithDuration(
-            0.3,
-            delay: 0,
-            options: [.CurveEaseInOut],
-            animations: {
-                for view in self.passcodeNumberInputtedViews {
-                    view.alpha = 0
-                }
-                for view in self.passcodeButtons {
-                    view.alpha = 0
-                }
-                self.titleLabel.alpha = 0
-            },
-            completion: nil)
-        
-        
-    }
 }
 
