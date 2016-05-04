@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6109658A1CDA32EC0034D459 /* PasscodePresenter+Scenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610965891CDA32EC0034D459 /* PasscodePresenter+Scenarios.swift */; };
 		611ED1151CB70D39005B5563 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611ED1141CB70D39005B5563 /* AppDelegate.swift */; };
 		611ED1171CB70D39005B5563 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611ED1161CB70D39005B5563 /* ViewController.swift */; };
 		611ED11A1CB70D39005B5563 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 611ED1181CB70D39005B5563 /* Main.storyboard */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		5D4551E770E265DFC12E1794 /* Pods_RxPasscode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RxPasscode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		610965891CDA32EC0034D459 /* PasscodePresenter+Scenarios.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PasscodePresenter+Scenarios.swift"; sourceTree = "<group>"; };
 		611ED1111CB70D39005B5563 /* RxPasscode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RxPasscode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		611ED1141CB70D39005B5563 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		611ED1161CB70D39005B5563 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 				61ABF0541CBBFF7500D1B443 /* PasscodeLockViewController+Animations.swift */,
 				61946EF41CB9F93C00C86F46 /* PasscodeLockViewController.swift */,
 				61946EF61CB9F96100C86F46 /* PasscodePresenter.swift */,
+				610965891CDA32EC0034D459 /* PasscodePresenter+Scenarios.swift */,
 			);
 			name = "Passcode control";
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6109658A1CDA32EC0034D459 /* PasscodePresenter+Scenarios.swift in Sources */,
 				61946EFB1CBA001000C86F46 /* PasscodeNumberButton.swift in Sources */,
 				61946EF91CB9F99200C86F46 /* Extensions.swift in Sources */,
 				61946EF71CB9F96100C86F46 /* PasscodePresenter.swift in Sources */,

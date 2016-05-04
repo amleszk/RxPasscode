@@ -18,9 +18,9 @@ class PasscodePresenter: NSObject {
     
     typealias PresentationCompletion = (Bool -> Void)
     
-    private var passcodeView: PasscodeObstructionView!
-    private var passcodeLockViewController: PasscodeLockViewController!
-    private var disposeBag: DisposeBag = DisposeBag()
+    internal var passcodeView: PasscodeObstructionView!
+    internal var passcodeLockViewController: PasscodeLockViewController!
+    internal var disposeBag: DisposeBag = DisposeBag()
     
     var passcodeDatasource: PasscodeDatasource?
     
@@ -46,102 +46,6 @@ class PasscodePresenter: NSObject {
     func isShowingPasscode() -> Bool {
         return passcodeLockViewController != nil
     }
-
-    func presentWithBlurBackground() {
-        screenshotAndPresentPasscodeObstructionIfNeeded()
-    }
-    
-    func presentWithValidatePasscode(allowCancel: Bool = false, completion: PresentationCompletion? = nil) {
-        screenshotAndPresentPasscodeObstructionIfNeeded()
-        guard let passcodeDatasource = passcodeDatasource else {
-            return
-        }
-        var numberOfTries = 0
-        let existingPasscode: [Int] = passcodeDatasource.passcode()
-        passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
-            if passcode == existingPasscode {
-                return .Accepted
-            } else {
-                numberOfTries += 1
-                if numberOfTries >= passcodeMaxNumberTries {
-                    passcodeDatasource.didFailAllPasscodeAttempts()
-                }
-                return .Invalid
-            }
-        }, dismiss: { didCancel in
-            self.dismissAnimated(true) {
-                completion?(didCancel)
-            }
-        })
-        passcodeLockViewController.cancelButtonEnabled = allowCancel
-        passcodeView.pinView(passcodeLockViewController.view)
-    }
-    
-    func presentWithNewPasscode(completion: PresentationCompletion? = nil) {
-        screenshotAndPresentPasscodeObstructionIfNeeded()
-        guard let passcodeDatasource = passcodeDatasource else {
-            return
-        }
-        var newPasscode: [Int] = []
-        passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
-            if newPasscode.count == 0 {
-                newPasscode = passcode
-                return .ReEnter
-            } else if newPasscode == passcode {
-                passcodeDatasource.didSetNewPasscode(newPasscode)
-                return .Accepted
-            } else {
-                return .Invalid
-            }
-        }, dismiss: { didCancel in
-            self.dismissAnimated(true) {
-                completion?(didCancel)
-            }
-        })
-        passcodeLockViewController.cancelButtonEnabled = true
-        passcodeView.pinView(passcodeLockViewController.view)
-    }
-    
-    func presentWithChangePasscode(completion: PresentationCompletion? = nil) {
-        screenshotAndPresentPasscodeObstructionIfNeeded()
-        guard let passcodeDatasource = passcodeDatasource else {
-            return
-        }
-        var numberOfTries = 0
-        let existingPasscode: [Int] = passcodeDatasource.passcode()
-        var validated = false
-        var newPasscode: [Int] = []
-        passcodeLockViewController = PasscodeLockViewController(validateCode: { passcode in
-            if !validated {
-                if existingPasscode == passcode {
-                    validated = true
-                    return .EnterNew
-                } else {
-                    return .Invalid
-                }
-            } else {
-                if newPasscode.count == 0 {
-                    newPasscode = passcode
-                    return .ReEnter
-                } else if newPasscode == passcode {
-                    passcodeDatasource.didSetNewPasscode(newPasscode)
-                    return .Accepted
-                } else {
-                    numberOfTries += 1
-                    if numberOfTries >= passcodeMaxNumberTries {
-                        passcodeDatasource.didFailAllPasscodeAttempts()
-                    }
-                    return .Invalid
-                }
-            }
-        }, dismiss: { didCancel in
-            self.dismissAnimated(true) {
-                completion?(didCancel)
-            }
-        })
-        passcodeLockViewController.cancelButtonEnabled = true
-        passcodeView.pinView(passcodeLockViewController.view)
-    }
     
     func dismissAnimated(animated: Bool, completion: ((Void) -> (Void))? = nil) {
         let removeView = {
@@ -157,7 +61,7 @@ class PasscodePresenter: NSObject {
         }
     }
     
-    private func screenshotAndPresentPasscodeObstructionIfNeeded() {
+    internal func screenshotAndPresentPasscodeObstructionIfNeeded() {
         if passcodeView?.window != nil {
             return
         }
