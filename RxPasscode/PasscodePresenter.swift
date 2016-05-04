@@ -178,7 +178,7 @@ class PasscodePresenter: NSObject {
         let memory = NSProcessInfo.processInfo().physicalMemory
         
         if (memory > physicalMemoryForBlurredBackground) {
-            let backgroundView = UIImageView(image: parentView.screenShotView())
+            let backgroundView = UIImageView(image: parentView.imageRepresentation())
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             return backgroundView
         } else {

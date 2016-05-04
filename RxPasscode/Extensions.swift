@@ -41,15 +41,41 @@ extension UIView {
         addConstraint(bottom)
     }
     
-    func screenShotView() -> UIImage {
-        let scale = UIScreen.mainScreen().scale
-        UIGraphicsBeginImageContextWithOptions(layer.frame.size, false, scale);
+    func imageRepresentation() -> UIImage? {
+        // Create a graphics context with the target size
+        // On iOS 4 and later, use UIGraphicsBeginImageContextWithOptions to take the scale into consideration
+        // On iOS prior to 4, fall back to use UIGraphicsBeginImageContext
+        let imageSize = bounds.size
+        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
         
-        layer.renderInContext(UIGraphicsGetCurrentContext()!)
-        let screenshot = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return nil
+        }
         
-        return screenshot
+        // -renderInContext: renders in the coordinate space of the layer,
+        // so we must first apply the layer's geometry to the graphics context
+        CGContextSaveGState(context)
+        // Center the context around the view's anchor point
+        CGContextTranslateCTM(context, center.x, center.y)
+        // Apply the view's transform about the anchor point
+        CGContextConcatCTM(context, transform)
+        // Offset by the portion of the bounds left of and above the anchor point
+        CGContextTranslateCTM(context,
+                              -bounds.size.width * layer.anchorPoint.x,
+                              -bounds.size.height * layer.anchorPoint.y)
+        
+        // Render the layer hierarchy to the current context
+        layer.renderInContext(context)
+        
+        // Restore the context
+        CGContextRestoreGState(context);
+        
+        // Retrieve the screenshot image
+        let image = UIGraphicsGetImageFromCurrentImageContext();
+        
+        UIGraphicsEndImageContext();
+        
+        return image;
     }
     
     func fadeInAnimated() {
