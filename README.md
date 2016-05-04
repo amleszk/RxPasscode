@@ -10,8 +10,11 @@ This simple project will display an iOS style passcode screen. There are many pa
 The Passcode presentation has 3 scenarios:
 
 1. Validate passcode
+  1. 3 tries max
 1. Set new passcode
+  1. enter passcode twice
 1. Change existing passcode (Which amounts to Validate => Set new)
+  1. validate
 
 
 **RxSwift**: The reactive programming library: https://github.com/ReactiveX/RxSwift  
