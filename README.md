@@ -14,7 +14,8 @@ The Passcode presentation has 3 scenarios:
 1. Set new passcode
   1. enter passcode twice
 1. Change existing passcode (Which amounts to Validate => Set new)
-  1. validate
+  1. validate - 3 tries
+  1. set new passcode
 
 
 **RxSwift**: The reactive programming library: https://github.com/ReactiveX/RxSwift  
