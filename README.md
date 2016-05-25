@@ -10,11 +10,11 @@ This simple project will display an iOS style passcode screen. There are many pa
 The Passcode presentation has 3 scenarios:
 
 1. Validate passcode
-  1. 3 tries max
+  1. After 3 tries, the presentation will call back to `didFailAllPasscodeAttempts`
 1. Set new passcode
   1. enter passcode twice
 1. Change existing passcode (Which amounts to Validate => Set new)
-  1. validate - 3 tries
+  1. validate existing passcode
   1. set new passcode
 
 
