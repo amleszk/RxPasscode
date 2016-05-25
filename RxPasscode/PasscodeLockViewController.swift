@@ -63,8 +63,8 @@ class PasscodeLockViewController: UIViewController {
             cancelButton = UIButton(type: .Custom)
             cancelButton.setTitle(NSLocalizedString("Cancel", comment: ""), forState: .Normal)
             cancelButton.translatesAutoresizingMaskIntoConstraints = false
-            cancelButton.rx_tap.subscribeNext { [weak self] in
-                self?.dismiss(true)
+            cancelButton.rx_tap.subscribeNext { [unowned self] in
+                self.dismiss(true)
             }.addDisposableTo(disposeBag)
             view.pinBottomRight(cancelButton, horizontalOffset:-20, verticalOffset:-20)
         }
@@ -77,12 +77,9 @@ class PasscodeLockViewController: UIViewController {
         for (number, x, y) in passcodeLayoutItems {
             let button = createButtonWithOffset("\(number)", horizontalOffset: x, verticalOffset: y)
             passcodeButtons.append(button)
-            button.rx_tap.subscribeNext { [weak self] in
-                guard let strongSelf = self else {
-                    return
-                }
-                if strongSelf.passcodeNumbers.value.count < passcodeNumbersRequired {
-                    strongSelf.passcodeNumbers.value.append(number)
+            button.rx_tap.subscribeNext { [unowned self] in
+                if self.passcodeNumbers.value.count < passcodeNumbersRequired {
+                    self.passcodeNumbers.value.append(number)
                 }
             }.addDisposableTo(disposeBag)
         }
@@ -94,15 +91,11 @@ class PasscodeLockViewController: UIViewController {
         
         //MARK: RX Events
         
-        passcodeNumbers.asObservable().subscribeNext { [weak self] numbers in
-            guard let strongSelf = self else {
-                return
-            }
-
+        passcodeNumbers.asObservable().subscribeNext { [unowned self] numbers in
             if numbers.count > 0 {
-                strongSelf.passcodeNumberInputtedViews[numbers.count-1].animateToState(.Active)
+                self.passcodeNumberInputtedViews[numbers.count-1].animateToState(.Active)
             } else {
-                for view in strongSelf.passcodeNumberInputtedViews {
+                for view in self.passcodeNumberInputtedViews {
                     view.animateToState(.Inactive)
                 }
             }
